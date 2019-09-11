@@ -110,3 +110,21 @@
 + xhr.overrideMimeType() 重写MIME类型
 + xhr.send() 发送AJAX请求
 + xhr.setRequestHeader() 设置请求头
+
+### promise
+
+> promise是es6中新增加的类，目的是为了管理异步操作  
+
+```javascript
+/*1. new Promise();创建类的一个实例，每一个实例都可以管理一个异步操作
+  必须传递一个回调函数进去（回调函数中管理你的异步操作）不传递会报错
+  回调函数总有两个参数
+  resolve：异步操作成功做的事件（代指成功后的时间队列）成功后要做的所有事情都存放在成功这个时间队列中
+  reject：异步操作失败做的事件（代指失败后的时间队列）
+  > new Promise的时候立即把回调函数执行了（promise是同步的）
+  2. 基于promise.prototype.then方法（还有catch/finally）向成功队列和失败队列中一次加入需要处理的事情
+*/
+let promise=new Promise(()=>{
+
+});
+```
