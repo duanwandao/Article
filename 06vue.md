@@ -20,7 +20,7 @@
   + 视图模型层
   + 视图模型层是view和model沟通的桥梁
   + 一方面他实现了Data Binding，也就是数据绑定，将Model的改编实例的反映到View中
-  + 另一风昂面他实现了DOM Listener，也就是DOM监听，当DOM发生一些事件（点击、滚动、touch等等）的时候，可以监听到，并在需要的情况下改变对应的Data
+  + 另一方面他实现了DOM Listener，也就是DOM监听，当DOM发生一些事件（点击、滚动、touch等等）的时候，可以监听到，并在需要的情况下改变对应的Data
 
 ### 创建Vue实例传入的options  
 
@@ -179,9 +179,149 @@
 
   > methods和computed看起来都可以实现我们的功能,那么为什么还要多一个计算属性这个东西呢？原因：计算属性会进行缓存，如果多次使用时，计算属性只会调用一次。
 
++ 对象增强写法
 
+  > ES6中，对对象字面量进行了很多增强。
 
+  ```javascript
+  //属性的简写
+  let obj={
+    name:name,
+    age:age
+  }
+  //可以简写为
+  let obj={
+    name,
+    age
+  }
+  //方法的简写
+  let obj={
+    test:function(){
+      console.log(111)
+    }
+    //可以简写为
+    let obj={
+      test(){
+        console.log(111)
+      }
+    }
+  }
+  ```
++ 事件监听
 
+  > 在前端开发中，我们需要经常和用于交互。这个时候，我们就必须监听用户发生的时间，比如点击、拖拽、键盘事件等等,在Vue中使用v-on指令监听事件
+
+  + v-on介绍
+  + 作用：绑定事件监听器
+  + 缩写：@
+  + 预期：Function | Inline Statement | Object
+  + 参数：event  
+
+  + v-on参数
+    + 当通过methods中定义方法，以供@click调用时，需要注意参数问题：
+    + 情况一：如果该方法不需要额外参数，那么方法后的()可以不添加。
+    + 但是注意：如果方法本身中有一个参数，那么会默认将原生事件event参数传递进去
+    + 情况二：如果需要同时传入某个参数，同时需要event时，可以通过$event传入事件。
+
+  + v-on修饰符
+    + .stop - 调用 event.stopPropagation()阻止冒泡
+    + .prevent - 调用 event.preventDefault()阻止默认行为
+    + .{keyCode | keyAlias} - 只当事件是从特定键触发时才触发回调。
+    + .native - 监听组件根元素的原生事件。
+    + .once - 只触发一次回调。
+
++ v-if/v-else/v-else-if
+
+  > 这三个指令与JavaScript的条件语句if、else、else if类似。Vue的条件指令可以根据表达式的值在DOM中渲染或销毁元素或组件
+
+  + 原理
+    + v-if后面的条件为false时，对应的元素以及其子元素不会渲染
+    + 也就是根本没有不会有对应的标签出现在DOM中
+
+  ```javascript
+  /*
+  小问题：
+    如果我们在有输入内容的情况下，切换了类型，我们会发现文字依然显示之前的输入的内容。
+    但是按道理讲，我们应该切换到另外一个input元素中了。
+    在另一个input元素中，我们并没有输入内容。
+    为什么会出现这个问题呢？
+  问题解答：
+    这是因为Vue在进行DOM渲染时，出于性能考虑，会尽可能的复用已经存在的元素，而不是重新创建新的元素。
+    在上面的案例中，Vue内部会发现原来的input元素不再使用，直接作为else中的input来使用了。
+  解决方案：
+    如果我们不希望Vue出现类似重复利用的问题，可以给对应的input添加key
+    并且我们需要保证key的不同
+  */
+  ```
+
++ v-show  
+
+  ```javascript
+  /*
+  v-show的用法和v-if非常相似，也用于决定一个元素是否渲染：
+    v-if和v-show对比
+    v-if和v-show都可以决定一个元素是否渲染，那么开发中我们如何选择呢？
+    v-if当条件为false时，压根不会有对应的元素在DOM中。
+    v-show当条件为false时，仅仅是将元素的display属性设置为none而已。
+  开发中如何选择呢？
+    当需要在显示与隐藏之间切片很频繁时，使用v-show
+    当只有一次切换时，通过使用v-if
+  */
+  ```
+
++ v-for
+
+  + 当我们有一组数据需要进行渲染时，我们就可以使用v-for来完成
+    + v-for的语法类似于JavaScript中的for循环
+    + 格式如下：item in items的形式
+
++ 组件的可以属性
+
+  ```JavaScript
+  /*
+  官方推荐我们在使用v-for时，给对应的元素或组件添加上一个:key属性。
+  为什么需要这个key属性呢（了解）？
+    这个其实和Vue的虚拟DOM的Diff算法有关系。
+    这里我们借用React’s diff algorithm中的一张图来简单说明一下：
+  当某一层有很多相同的节点时，也就是列表节点时，我们希望插入一个新的节点
+    我们希望可以在B和C之间加一个F，Diff算法默认执行起来是这样的。
+    即把C更新成F，D更新成C，E更新成D，最后再插入E，是不是很没有效率？
+  所以我们需要使用key来给每个节点做一个唯一标识
+    Diff算法就可以正确的识别此节点
+    找到正确的位置区插入新的节点。
+  所以一句话，key的作用主要是为了高效的更新虚拟DOM。
+  */
+  ```
++ 那些数组的方法是响应式的
+
+  > 因为Vue是响应式的，所以当数据发生变化时，Vue会自动检测数据变化，视图会发生对应的更新
+  
+  + push()
+  + pop()
+  + shift()
+  + unshift()
+  + splice()
+  + sort()
+  + reverse()
+
++ v-model  
+
+  > 表单控件在实际开发中是非常常见的。特别是对于用户信息的提交，需要大量的表单。Vue中使用v-model指令来实现表单元素和数据的双向绑定。
+
+  > v-model其实是一个语法糖，它的背后本质上是包含两个操作：
+    1. v-bind绑定一个value属性
+    2. v-on指令给当前元素绑定input事件
+    3. 也就是说下面的代码：等同于下面的代码：
+      ```vue
+        <input type="text" v-model="message">
+      //等同于
+        <input type="text" 
+               v-bind:value="message" 
+               v-on:input="message = $event.target.value"
+        >
+
+      ```
+ 
 
 
 

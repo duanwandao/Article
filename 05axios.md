@@ -2,8 +2,8 @@
 
 > axios:它是一个类库，基于promise管理的ajax库  
 
-1. axios是一个对象，提供了对应请求方式的方法（例如get/post/head/delete/put/options）  
-2. 支持的参数配置axios.get([url],[options])
++ axios是一个对象，提供了对应请求方式的方法（例如get/post/head/delete/put/options）  
++ 支持的参数配置axios.get([url],[options])
 
 ```javascript
 axios.get(url,{
@@ -20,4 +20,4 @@ axios.get(url,{
 })
 ```
 
-3. 基于get或者post方法发请求，返回的结构都是promise实例  
++ 基于get或者post方法发请求，返回的结构都是promise实例  
