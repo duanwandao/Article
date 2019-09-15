@@ -146,7 +146,7 @@
 
   ```javascript
     conputed:{
-      fullName(){
+      fullName () {
         return this.firstName+this.lastName
       }
     }
@@ -315,7 +315,7 @@
     3. 也就是说下面的代码：等同于下面的代码：
 
   ```javascript
-        <input type="text" v-model="message">
+  <input type="text" v-model="message">
       //等同于
         <input type="text"  
                v-bind:value="message"  
@@ -663,8 +663,650 @@ Vue.component('cpn',{
   + 只要给slot元素一个name属性即可
   + \<slot name='myslot'></slot>
 
+## 模块化开发
+
++ 随着ajax异步请求的出现，慢慢形成了前后端的分离
+  + 客户端需要完成的事情越来越多，代码量也是与日俱增
+  + 为了应对代码量的剧增，我们通常会将代码组织在多个js文件中，进行维护
+  + 这种代码的编写方式对js文件的依赖顺序几乎是强制性的
+  + 但是当js文件过多，比如有几十个的时候，弄清楚它们的顺序是一件比较同时的事情
+
++ 在匿名函数内部，定义一个对象
+  + 给对象添加各种需要暴露到外面的属性和方法(不需要暴露的直接定义即可)
+  + 最后将这个对象返回，并且在外面使用了一个MoudleA接受
+
++ 这就是模块最基础的封装，事实上模块的封装还有很多高级的话题
+  + 但是我们这里就是要认识一下为什么需要模块，以及模块的原始雏形
+  + 前端模块化开发已经有了很多既有的规范，以及对应的实现方案
+
+### commonJS
+
++ 模块化有两个核心：导出和导入
+  
+  ```javascript
+  //导出
+  module.exports={
+    flag:ture,
+    test(a,b){
+      return a+b
+    }
+  }
+  //导入
+  let aaa=require('module')
+  let test=aaa.test;
+  ```
+
+### se6的export
+
+```javascript
+//导出变量
+export let name='meng'
+export let age=18
+
+let name='meng'
+let age=18
+export{name,age}
+//导出函数
+export function test (content){
+  console.log(tcontent)
+}
+
+export class Person{
+  constructor(name,age){
+    this.name=name;
+    this.age=age;
+  }
+}
+```
+
++ 某些情况下，一个模块中包含某个的功能，我们并不希望给这个功能命名，而且让导入者可以自己来命名
+  + 这个时候就可以使用export default
+
+```javascript
+expor default function  (){
+console.log(111)
+}
+//在别的地方导入我门就可以自定义名字了
+import myFun from "module";
+```
+
++ 另外，需要注意：export default在同一个模块中，不允许同时存在多个。
+
+### es6的import
+
+导入
+
+## webpack
+
+### 认识webpack
+
++ 什么是webpack
+  + 这个webpack还真不是一两句话可以说清楚的
+
++ 我们先看看官方的解释
+  + At its core, webpack is a static module bundler for modern JavaScript applications
+  + 从本质上来讲，webpack是一个现代的JavaScript应用的静态模块打包工具
+
++ 用概念解释概念，还是不清晰
+  + 我们从两个点来解释上面这句话：模块 和 打包
+
++ 前端模块化
+  + 在ES6之前，我们要想进行模块化开发，就必须借助于其他的工具，让我们可以进行模块化开发
+  + 并且在通过模块化开发完成了项目后，还需要处理模块间的各种依赖，并且将其进行整合打包
+  + 而webpack其中一个核心就是让我们可能进行模块化开发，并且会帮助我们处理模块间的依赖关系
+  + 而且不仅仅是JavaScript文件，我们的CSS、图片、json文件等等在webpack中都可以被当做模块来使用（在后续我们会看到）
+  + 这就是webpack中模块化的概念
+
++ 打包如何理解
+  + 理解了webpack可以帮助我们进行模块化，并且处理模块间的各种复杂关系后，打包的概念就非常好理解了
+  + 就是将webpack中的各种资源模块进行打包合并成一个或多个包(Bundle)
+  + 并且在打包的过程中，还可以对资源进行处理，比如压缩图片，将scss转成css，将ES6语法转成ES5语法，将TypeScript转成JavaScript等等操作
+  + 但是打包的操作似乎grunt/gulp也可以帮助我们完成，他们的不同
+
++ grunt/gulp的核心是Task
+  + 我们可以配置一系列的task，并且定义task要处理的事务（例如ES6、ts转化，图片压缩，scss转成css）
+  + 之后让grunt/gulp来依次执行这些task，而且让整个流程自动化
+  + 所以grunt/gulp也被称为前端自动化任务管理工具
+
++ 什么时候用grunt/gulp
+  + 如果你的工程模块依赖非常简单，甚至是没有用到模块化的概念
+  + 只需要进行简单的合并、压缩，就使用grunt/gulp即可
+  + 但是如果整个项目使用了模块化管理，而且相互依赖非常强，我们就可以使用更加强大的webpack了
+
++ grunt/gulp和webpack有什么不同
+  + grunt/gulp更加强调的是前端流程的自动化，模块化不是它的核心
+  + webpack更加强调模块化开发管理，而文件压缩合并、预处理等功能，是他附带的功能
+
+### webpack起步
+
++ 文件和文件夹解析
+  + dist文件夹：用于存放之后打包的文件
+  + src文件夹：用于存放我们写的源文件
+  + index.html：浏览器打开展示的首页html
+  + package.json：通过npm init生成的，npm包管理的文件
+
++ js文件的打包
+  + webpack就是一个模块化的打包工具，所以它支持我们代码中写模块化，可以对模块化的代码进行处理
+  + 如果在处理完所有模块之间的关系后，将多个js打包到一个js文件中，引入时就变得非常方便了
+  + webpack/src/main.js dist/bundle.js
+
++ 打包后会在dist文件下，生成一个bundle.js文件
+  + bundle.js文件，是webpack处理了项目直接文件依赖后生成的一个js文件，我们只需要将这个js文件在index.html中引入即可
+
+### webpack配置
+
+> 入口和出口的配置
+
++ 我们考虑一下，如果每次使用webpack的命令都需要写上入口和出口作为参数，就非常麻烦，有没有一种方法可以将这两个参数写到配置中，在运行时，直接读取呢？
++ 当然可以，就是创建一个webpack.config.js文件
+
+```JavaScript
+const  path=require('path')
+
+module.exports={
+  //入口：可以是字符串、数组、对象，这里我们的入口只有一个，所以写一个字符串即可
+  entry:'./src/main.js',
+  //出口：通常是一个对象，里面至少包含两个重要属性，path和filename
+  output:{
+    path:path.resolve(__dirname,'dist'),//path是一个绝对路径
+    filename:'bundle.js'
+  }
+}
+```
+
++ package.json中定义启动
+  + 我们可以在package.json的scripts中定义自己的执行脚本
+  + package.json中的scripts的脚本在执行时，会按照一定的顺序寻找命令对应的位置
+  + 首先，会寻找本地的node_modules/.bin路径中对应的命令
+  + 如果没有找到，会去全局的环境变量中寻找
+
+### loader的使用
+
++ loader是webpack中一个非常核心的概念
++ webpack用来做什么呢
+  + 在我们之前的实例中，我们主要是用webpack来处理我们写的js代码，并且webpack会自动处理js之间相关的依赖
+  + 但是，在开发中我们不仅仅有基本的js代码处理，我们也需要加载css、图片，也包括一些高级的将ES6转成ES5代码，将TypeScript转成ES5代码，将scss、less转成css，将.jsx、.vue文件转成js文件等等
+  + 对于webpack本身的能力来说，对于这些转化是不支持的
+  + 那怎么办呢？给webpack扩展对应的loader就可以啦
+
++ loader使用过程
+  + 通过npm安装需要使用的loader
+  + 在webpack.config.js中的modules关键字下进行配置
+
+```JavaScript
+modul:{
+  rules:[
+    {
+      test:/\.css$/,
+      use:['style-loader','scc-loader']
+    }
+  ]
+}
+
+
+
+
+//less处理
+module.exports = {
+    ...
+    module: {
+        rules: [{
+            test: /\.less$/,
+            use: [{
+                loader: "style-loader" // creates style nodes from JS strings
+            }, {
+                loader: "css-loader" // translates CSS into CommonJS
+            }, {
+                loader: "less-loader" // compiles Less to CSS
+            }]
+        }]
+    }
+};
+```
+
++ 图片文件处理 – 资源准备阶段
+
+  + 图片处理，我们使用url-loader来处理，依然先安装url-loader
+
+```javascript
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.(png|jpg|gif)$/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              //当加载的图片，小于limit时候。会将图片编译成base64字符串形式
+              //当加载的图片大于limit时候，需要安装file-loader
+              limit: 8192
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
++ 我们发现webpack自动帮助我们生成一个非常长的名字
+  + 这是一个32位hash值，目的是防止名字重复
+  + 但是，真实开发中，我们可能对打包的图片名字有一定的要求
+  + 比如，将所有的图片放在一个文件夹中，跟上图片原来的名称，同时也要防止重复
+  
++ 我们可以在options中添加上如下选项
+  + img：文件要打包到的文件夹
+  + name：获取图片原来的名字，放在该位置
+  + hash:8：为了防止图片名称冲突，依然使用hash，但是我们只保留8位
+  + ext：使用图片原来的扩展名
+
++ 我们发现图片并没有显示出来，这是因为图片使用的路径不正确
+  + 默认情况下，webpack会将生成的路径直接返回给使用者
+  + 但是，我们整个程序是打包在dist文件夹下的，所以这里我们需要在出口路径下再添加一个publicPath:'dist/'
+
++ ES6语法处理
+  + 如果希望将ES6的语法转成ES5，那么就需要使用babel
+  + 而在webpack中，我们直接使用babel对应的loader就可以了
+  + npm install --save-dev babel-loader@7 babel-core babel-preset-es2015
+  
+```javascript
+module: {
+  rules: [
+    {
+      test: /\.js$/,
+      //排除node文件夹之内的js
+      exclude: /(node_modules|bower_components)/,
+      use: {
+        loader: 'babel-loader',
+        options: {
+          presets: ['@babel/preset-env']
+        }
+      }
+    }
+  ]
+}
+```
+
+### webpack中配置vue
+
++ 安装vue-loader和vue-template-compiler
+
+```
+resolve:{
+//配置别名
+alias:{
+'vue$':'vue/dist/vue.esm.js'
+},
+extensions:['.js','.css','.vue']
+}
+```
+
+### plugin的使用
+
++ plugin是什么
+  + plugin是插件的意思，通常是用于对某个现有的架构进行扩展
+  + webpack中的插件，就是对webpack现有功能的各种扩展，比如打包优化，文件压缩等等
+
++ loader和plugin区别
+  + loader主要用于转换某些类型的模块，它是一个转换器
+  + plugin是插件，它是对webpack本身的扩展，是一个扩展器
+  
++ plugin的使用过程
+  + 步骤一：通过npm安装需要使用的plugins(某些webpack已经内置的插件不需要安装)
+  + 步骤二：在webpack.config.js中的plugins中配置插件
+  
++ 添加版权的Plugin
+  + 我们先来使用一个最简单的插件，为打包的文件添加版权声明该插件名字叫BannerPlugin，属于webpack自带的插件。
+  
+```javascript
+module.exports={
+    plugins:[
+        new webpack.BannerPlugin('最终版权归Dylan所有')
+    ]
+}
+```
+
++ 打包html的plugin
+  + 目前，我们的index.html文件是存放在项目的根目录下的
+  + 我们知道，在真实发布项目时，发布的是dist文件夹中的内容，但是dist文件夹中如果没有index.html文件，那么打包的js等文件也就没有意义了
+  + 所以，我们需要将index.html文件打包到dist文件夹中，这个时候就可以使用HtmlWebpackPlugin插件
+  
++ HtmlWebpackPlugin插件可以为我们做这些事情
+  + 自动生成一个index.html文件(可以指定模板来生成)
+  + 将打包的js文件，自动通过script标签插入到body中
+  
+```javascript
+    plugins:[
+    new webpack.BannerPlugin('最终版权归Dylan所有'),
+    new htmlWebpackPlugin({
+    //这里的template表示根据什么模板来生成index.html
+    //我们需要删除之前在output中添加的publicPath属性,否则插入的script标签中的src可能会有问题
+    template:'index.thml'
+    })
+    ]
+```
+
++ js压缩的Plugin
+  + 在项目发布之前，我们必然需要对js等文件进行压缩处理
+  + 这里，我们就对打包的js文件进行压缩
+  + 我们使用一个第三方的插件uglifyjs-webpack-plugin，并且版本号指定1.1.1，和CLI2保持一致
+
+```javascript
+plugins:[
+    new uglifyJsPlugin()
+]
+```
+
+### 搭建本地服务器
+
++ webpack提供了一个可选的本地开发服务器，这个本地服务器基于node.js搭建，内部使用express框架，可以实现我们想要的让浏览器自动刷新显示我们修改后的结果
++ 不过它是一个单独的模块，在webpack中使用之前需要先安装它
+
+`npm install --save-dev webpack-dev-server@2.9.1`
+
++ devserver也是作为webpack中的一个选项，选项本身可以设置如下属性
+  + contentBase：为哪一个文件夹提供本地服务，默认是根文件夹，我们这里要填写./dist
+  + port：端口号
+  + inline：页面实时刷新
+  + historyApiFallback：在SPA页面中，依赖HTML5的history模式
+
 ## Vue-cli
 
+### Vue CLI
+
++ 如果你在开发大型项目, 那么你需要, 并且必然需要使用Vue CLI
+
+  + 使用Vue.js开发大型应用时，我们需要考虑代码目录结构、项目结构和部署、热加载、代码单元测试等事情
+  + 如果每个项目都要手动完成这些工作，那无以效率比较低效，所以通常我们会使用一些脚手架工具来帮助完成这些事情。
+
++ CLI是什么意思
+  + CLI是Command-Line Interface, 翻译为命令行界面, 但是俗称脚手架
+  + Vue CLI是一个官方发布 vue.js 项目脚手架
+  + 使用 vue-cli 可以快速搭建Vue开发环境以及对应的webpack配置
+
+```javascript
+//脚手架3的安装方法
+npm install @vue/cli -g
+//脚手架3创建项目
+vue create my-project
+//脚手架2需要从3的模板里面拉取
+npm install @vue/cli-init -g 
+//脚手架2创建项目
+vue init webpack my-project
+```
+
+### Vue CLI2
+
+[![10b52fe060a1b0be6.png](https://www.kanjiantu.com/images/2019/09/15/10b52fe060a1b0be6.png)](https://www.kanjiantu.com/image/dpBSaz)
+
+[![290c5c3aca171f19e.png](https://www.kanjiantu.com/images/2019/09/15/290c5c3aca171f19e.png)](https://www.kanjiantu.com/image/dpBLqP)
+
+#### Runtime-Compiler和Runtime-only的区别
+
++ 如果在之后的开发中，你依然使用template，就需要选择Runtime-Compiler
++ 如果你之后的开发中，使用的是.vue文件夹开发，那么可以选择Runtime-only
+
+![图片2.png](http://ww1.sinaimg.cn/large/00611hkHly1g706la6hdvj30ib0hlgp1.jpg)
+
+![图片1.png](http://ww1.sinaimg.cn/large/00611hkHly1g706mbh7nwj31zv12in8j.jpg)
+
+```javascript
+new Vue({
+el:'#app',
+conponents:{app},
+template:'<app/>'
+})
+// tempalte-->ast-->render-->vdom-->UI
+
+new Vue({
+el:'#app',
+render:h=>h(app)
+})
+//那么 Vue中的template谁处理了？
+//是由vue-template-compiler
+// render-->vdom-->UI  速度更快，文件更小
+
+
+const cpn=Vue.component('cpn',{
+  template:'<div>我是cpn组件</div>',
+  data () {
+    return{
+      
+    }
+  }
+})
+
+//render函数的使用
+new Vue({
+el:'#app',
+render:(createElement)=>{
+  //使用方法1
+  //return createElement('标签'，'相关数据对象（可以不传）',['内容数组'])
+  return createElement('div',{class:'box'},['dylan'])
+  //嵌套render函数
+  return createElement('div',{class:'box'},createElement('h2'),['标题呀'])
+  //使用方法2传入组件
+  return createElement(cpn)
+}
+})
+```
+
+![图片3.png](http://ww1.sinaimg.cn/large/00611hkHly1g706mpojsnj327o132tfq.jpg)
+
+![图片4.png](http://ww1.sinaimg.cn/large/00611hkHly1g706mycr9nj323f10i0z2.jpg)
+
+### Vue CLI3
+
++ vue-cli 3 与 2 版本有很大区别
+  + vue-cli 3 是基于 webpack 4 打造，vue-cli 2 还是 webapck 3
+  + vue-cli 3 的设计原则是“0配置”，移除的配置文件根目录下的，build和config等目录
+  + vue-cli 3 提供了 vue ui 命令，提供了可视化配置，更加人性化
+  + 移除了static文件夹，新增了public文件夹，并且index.html移动到public中
+
+#### vue cli3配置文件的查看和修改
+
+1. 启动配置服务器vue ui
+2. node_modules-->@vue-->cli-service-->webpack.cpnfig.js-->lib-->service
+3. 创建vue.config.js
+
+```javascript
+//会自动与隐藏起来的webpack配置进行合并
+module.exports={
+   
+}
+```
+
 ## Vue-router
+
+### 认识路由
+
++ 路由器提供了两种机制: 路由和转送
+  + 路由是决定数据包从来源到目的地的路径
+  + 转送将输入端的数据转移到合适的输出端
+  
++ 路由中有一个非常重要的概念叫路由表
+  + 路由表本质上就是一个映射表, 决定了数据包的指向
+
+### 后端渲染和前端渲染
+
+#### 后端渲染阶段
+
++ 早期的网站开发整个HTML页面是由服务器来渲染的
+  + 服务器直接生产渲染好对应的HTML页面, 返回给客户端进行展示
+  
++ 一个网站, 这么多页面服务器如何处理呢
+  + 一个页面有自己对应的网址, 也就是URL
+  + URL会发送到服务器, 服务器会通过正则对该URL进行匹配, 并且最后交给一个Controller进行处理
+  + Controller进行各种处理, 最终生成HTML或者数据, 返回给前端
+  + 这就完成了一个IO操作.
+  
++ 上面的这种操作, 就是后端路由
+  + 当我们页面中需要请求不同的路径内容时, 交给服务器来进行处理, 服务器渲染好整个页面, 并且将页面返回给客户端
+  + 这种情况下渲染好的页面, 不需要单独加载任何的js和css, 可以直接交给浏览器展示, 这样也有利于SEO的优化
+  
++ 后端路由的缺点:
+  + 一种情况是整个页面的模块由后端人员来编写和维护的
+  + 另一种情况是前端开发人员如果要开发页面, 需要通过PHP和Java等语言来编写页面代码
+  + 另一种情况是前端开发人员如果要开发页面, 需要通过PHP和Java等语言来编写页面代码
+  
+#### 前端渲染阶段
+
++ 前后端分离阶段
+  + 随着Ajax的出现, 有了前后端分离的开发模式后端只提供API来返回数据, 前端通过Ajax获取数据, 并且可以通过JavaScript将数据渲染到页面中
+  + 这样做最大的优点就是前后端责任的清晰, 后端专注于数据上, 前端专注于交互和可视化上
+  + 并且当移动端(iOS/Android)出现后, 后端不需要进行任何处理, 依然使用之前的一套API即可
+  +目前很多的网站依然采用这种模式开发 
+
++ 单页面富应用阶段
+  + 其实SPA最主要的特点就是在前后端分离的基础上加了一层前端路由
+  + 也就是前端来维护一套路由规则
+
++ 前端路由的核心是什么呢
+  + 改变URL，但是页面不进行整体的刷新
+
++ URL的hash
+  + URL的hash也就是锚点(#), 本质上是改变window.location的href属性
+  + 我们可以通过直接赋值location.hash来改变href, 但是页面不发生刷新
+
+```javascript
+loaction.href
+'http://192.168.1.101:8000/examples/urlChange/'
+loaction.hash='/'
+'/'
+location.href
+'http://192.168.1.101:8000/examples/urlChange/#/'
+location.hash='/foo'
+'/foo'
+location.href
+'http://192.168.1.101:8000/examples/urlChange/#/foo'
+```
+
++ HTML5的history模式：pushState
++ history接口是HTML5新增的, 它有五种模式改变URL而不刷新页面
++ 第一种history.pushState() 类似于出栈进栈
+
+```javascript
+location.href
+'http://192.168.1.101:8000/'
+history.pushState(({},'','/foo'))
+location.href
+'http://192.168.1.101:8000/foo'
+history.pushState({},'','/')
+location.href
+'http://192.168.1.101:8000/'
+```
+
++ history.replaceState() 替换 不能点击返回
+
+```javascript
+location.href
+'http://192.168.1.101:8000/'
+history.replaceState(({},'','/foo'))
+location.href
+'http://192.168.1.101:8000/foo'
+history.pushState({},'','/foo/bar')
+location.href
+'http://192.168.1.101:8000/foo/bar'
+```
+
++ history.go()
+
+```javascript
+location.href
+'http://192.168.1.101:8000/'
+history.go(-1)
+location.href
+'http://192.168.1.101:8000/foo'
+history.go(-1)
+location.href
+'http://192.168.1.101:8000/examples/urlChange/'
+history.go(1)
+location.href
+'http://192.168.1.101:8000/foo'
+```
++ 上面只演示了三个方法
++ 因为 history.back() 等价于 history.go(-1)
++ history.forward() 则等价于 history.go(1)
++ 这三个接口等同于浏览器界面的前进后退
+
+### Vue-router基本使用
+
++ vue-router是Vue.js官方的路由插件，它和vue.js是深度集成的，适合用于构建单页面应用
++ vue-router是基于路由和组件的
+  + 路由用于设定访问路径, 将路径和组件映射起来
+  + 在vue-router的单页面应用中, 页面的路径的改变就是组件的切换
+  
+#### vue-router安装
+
++ 步骤一: 安装vue-router
+  + npm install vue-router --save
+
++ 步骤二: 在模块化工程中使用它(因为是一个插件, 所以可以通过Vue.use()来安装路由功能)
+  + 第一步：导入路由对象，并且调用 Vue.use(VueRouter)
+  + 第二步：创建路由实例，并且传入路由映射配置
+  + 第三步：在Vue实例中挂载创建的路由实例
+
++ 使用vue-router的步骤
+  + 第一步: 创建路由组件
+  + 第二步: 配置路由映射: 组件和路径映射关系
+  + 第三步: 使用路由: 通过<router-link>和<router-view>
+
+```javascript
+//创建router文件夹创建index.js
+import Vue from 'vue'
+import  VueRouter from 'vue-router'
+
+//1.注册插件
+Vue.use(VueRouter)
+
+//2.定义路由映射表
+const routes=[]
+
+//3.创建router实例
+const router=new VueRouter({
+
+})
+
+//4.到出router实例
+export default router
+
+//5.挂在到Vue实例中
+import router from './router'
+new Vue({
+el:'#app',
+router,
+data:{
+  
+}
+})
+```
+
+#### 组件和路径的映射关系
+
+```javascript
+const routes=[
+    {
+      path:'/home',
+      component:null
+    },
+    {
+      path:'/about',
+      component:null
+    }
+]
+```
+
+### 细节处理
+
+### 路由懒加载
+
+### Vue-router嵌套路由
+
+### Vue-router参数传递
+
+### Vue-router导航守卫
+
+### keep-alive
 
 ## vuex
