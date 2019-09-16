@@ -7,34 +7,54 @@
   <title>Document</title>
 </head>
 <body>
-  <button>
-    点击加载
-  </button>
-  <script>
-    var arr=[];
-  var btn=document.querySelector("button");
-  btn.onclick = function() {
-    //创建一个异步对象
-    var xmlhttp=new XMLHttpRequest();
-    //设置请求方式和请求地址
-    xmlhttp.open("GET","01.php",true);
-    //发送请求
-    xmlhttp.send();
-    //监听状态的变化
-    xmlhttp.onreadystatechange = function() {
-      if (xmlhttp.readyState === 4) {
-        //判断请求是不是成功
-        if (xmlhttp.status>=200 && xmlhttp.status < 300 ||xmlhttp.status === 304){
-          console.log('接受到数据')
-        }else {
-          console.log("没有接收到数据")
-        }
-        
-      }
-      
-    }
-  }
+<!--  <button>-->
+<!--    点击加载-->
+<!--  </button>-->
+<!--  <script>-->
+<!--    var arr=[];-->
+<!--  var btn=document.querySelector("button");-->
+<!--  btn.onclick = function() {-->
+<!--    //创建一个异步对象-->
+<!--    var xmlhttp=new XMLHttpRequest();-->
+<!--    //设置请求方式和请求地址-->
+<!--    xmlhttp.open("GET","01.php",true);-->
+<!--    //发送请求-->
+<!--    xmlhttp.send();-->
+<!--    //监听状态的变化-->
+<!--    xmlhttp.onreadystatechange = function() {-->
+<!--      if (xmlhttp.readyState === 4) {-->
+<!--        //判断请求是不是成功-->
+<!--        if (xmlhttp.status>=200 && xmlhttp.status < 300 ||xmlhttp.status === 304){-->
+<!--          console.log('接受到数据')-->
+<!--        }else {-->
+<!--          console.log("没有接收到数据")-->
+<!--        }-->
+<!--        -->
+<!--      }-->
+<!--      -->
+<!--    }-->
+<!--  }-->
 
-  </script>
+<!--  </script>-->
+
+
+<div id="app"></div>
+<script>
+  // var box=document.getElementById('app')
+  // console.log(box);
+  var x=1,
+          y=2;
+  function fn (x){
+    this.x *=(++x);
+    fn=function (y){
+      this.y *= (--y);
+      console.log(x+y);
+    }
+    console.log(x+y);
+    return fn;
+  }
+  fn(3)(4)
+  console.log(x+y);
+</script>
 </body>
 </html>

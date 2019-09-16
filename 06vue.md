@@ -635,7 +635,6 @@ Vue.component('cpn',{
   + 如果我们将子组件放在另外一个组件之内，很可能该父组件没有对应的属性，往往会引起问题。
   + 另外，更不好做的是通过$parent直接修改父组件的状态，那么父组件中的状态将变得飘忽不定，很不利于我的调试和维护
 
-
 ### 插槽slot
 
 + slot翻译为插槽
@@ -932,7 +931,7 @@ module: {
 
 + 安装vue-loader和vue-template-compiler
 
-```
+```JavaScript
 resolve:{
 //配置别名
 alias:{
@@ -1031,7 +1030,7 @@ npm install @vue/cli -g
 //脚手架3创建项目
 vue create my-project
 //脚手架2需要从3的模板里面拉取
-npm install @vue/cli-init -g 
+npm install @vue/cli-init -g  
 //脚手架2创建项目
 vue init webpack my-project
 ```
@@ -1072,7 +1071,7 @@ const cpn=Vue.component('cpn',{
   template:'<div>我是cpn组件</div>',
   data () {
     return{
-      
+
     }
   }
 })
@@ -1113,7 +1112,7 @@ render:(createElement)=>{
 ```javascript
 //会自动与隐藏起来的webpack配置进行合并
 module.exports={
-   
+
 }
 ```
 
@@ -1156,7 +1155,7 @@ module.exports={
   + 随着Ajax的出现, 有了前后端分离的开发模式后端只提供API来返回数据, 前端通过Ajax获取数据, 并且可以通过JavaScript将数据渲染到页面中
   + 这样做最大的优点就是前后端责任的清晰, 后端专注于数据上, 前端专注于交互和可视化上
   + 并且当移动端(iOS/Android)出现后, 后端不需要进行任何处理, 依然使用之前的一套API即可
-  +目前很多的网站依然采用这种模式开发 
+  +目前很多的网站依然采用这种模式开发  
 
 + 单页面富应用阶段
   + 其实SPA最主要的特点就是在前后端分离的基础上加了一层前端路由
@@ -1225,7 +1224,8 @@ history.go(1)
 location.href
 'http://192.168.1.101:8000/foo'
 ```
-+ 上面只演示了三个方法
+
++ 上面只演示了三个方法  
 + 因为 history.back() 等价于 history.go(-1)
 + history.forward() 则等价于 history.go(1)
 + 这三个接口等同于浏览器界面的前进后退
@@ -1285,28 +1285,586 @@ data:{
 #### 组件和路径的映射关系
 
 ```javascript
+import Home from '../components/home'
+import About from '../components/about'
 const routes=[
     {
       path:'/home',
-      component:null
+      component:Home
     },
     {
       path:'/about',
-      component:null
+      component:About
     }
 ]
 ```
 
+#### 使用路由
+
++ <router-link>: 该标签是一个vue-router中已经内置的组件, 它会被渲染成一个<a>标签
++ <router-view>: 该标签会根据当前的路径, 动态渲染出不同的组件
++ 网页的其他内容, 比如顶部的标题/导航, 或者底部的一些版权信息等会和<router-view>处于同一个等级
++ 在路由切换时, 切换的是<router-view>挂载的组件, 其他内容不会发生改变
+
+```javascript
+<router-link>首页</ruoter-link>
+<router-link>关于</ruoter-link>
+<router-view></router-view>
+```
+
 ### 细节处理
+
+#### 路由的默认路径
+
++ 默认情况下, 进入网站的首页, 我们希望<router-view>渲染首页的内容
++ 如何可以让路径默认跳到到首页, 并且<router-view>渲染首页组件呢
++ 我们只需要配置多配置一个映射就可以了
++ 配置解析
+  + 我们在routes中又配置了一个映射
+  + path配置的是根路径: /
+  + edirect是重定向, 也就是我们将根路径重定向到/home的路径下, 这样就可以得到我们想要的结果了
+  
+```javascript
+const routes=[
+    {
+      path:'/',
+      redirct:'/home'
+    }
+]
+```
+
+#### HTML5的History模式
+
++ 我们前面说过改变路径的方式有两种
+  + URL的hash
+  + HTML5的history
+  + 默认情况下, 路径的改变使用的URL的hash
+
++ 如果希望使用HTML5的history模式, 非常简单, 进行如下配置即可
+
+```javascript
+const router=new VueRouter({
+routes,
+mode:'history'
+})
+```
+
+#### router-link补充
+
++ 在前面的<router-link>中, 我们只是使用了一个属性: to, 用于指定跳转的路径
++ <router-link>还有一些其他属性
+  + tag: tag可以指定<router-link>之后渲染成什么组件, 比如上面的代码会被渲染成一个<li>元素, 而不是<a>
+  + replace: replace不会留下history记录, 所以指定replace的情况下, 后退键返回不能返回到上一个页面中
+  + active-class: 当<router-link>对应的路由匹配成功时, 会自动给当前元素设置一个router-link-active的class, 设置active-class可以修改默认的名称.
+
+```javascript
+<router-link to='/home' tag='li' replace active-class='active'></router-link>
+```
+
+#### 修改linkActiveClass
+
+```javascript
+//单个路由修改activeclass
+<router-link to='/home' tag='li' replace active-class='active'></router-link>
+//router-link-exact-active   router-link-active
+const router=new VueRouter({
+routes,
+mode:'history',
+//在这里更改路由所有的都会改变
+linkActiveClass='active'
+})
+```
+
+#### 路由代码跳转
+
+```javascript
+<button @click='linkToHome'></button>
+<button @click='linkToAbout'></button>
+//设置方法，更改路由跳转
+methods：{
+  linkToHome(){
+    this.$router.push('/home')
+  }
+  linkToAbout(){
+    this.$router.push('/about')
+  }
+}
+```
+
+#### 动态路由
+
++ 在某些情况下，一个页面的path路径可能是不确定的，比如我们进入用户界面时，希望是如下的路径
+  + /user/aaaa或/user/bbbb
+  + 除了有前面的/user之外，后面还跟上了用户的ID
+  + 这种path和Component的匹配关系，我们称之为动态路由(也是路由传递数据的一种方式)
+  
+```javascript
+{
+  path:'/user/:id'
+}
+<router-link to='/user/123'></router-link>
+<h2>{{$route/params.id}}<h2>
+```
 
 ### 路由懒加载
 
++ 官方给出了解释
+  + 当打包构建应用时，Javascript 包会变得非常大，影响页面加载
+  + 如果我们能把不同路由对应的组件分割成不同的代码块，然后当路由被访问的时候才加载对应组件，这样就更加高效了
+  
++ 首先, 我们知道路由中通常会定义很多不同的页面
++ 这个页面最后被打包在哪里呢? 一般情况下, 是放在一个js文件中
++ 但是, 页面这么多放在一个js文件中, 必然会造成这个页面非常的大
++ 如果我们一次性从服务器请求下来这个页面, 可能需要花费一定的时间, 甚至用户的电脑上还出现了短暂空白的情况
++ 如何避免这种情况呢? 使用路由懒加载就可以了
++ 路由懒加载做了什么
+  + 路由懒加载的主要作用就是将路由对应的组件打包成一个个的js代码块
+  + 只有在这个路由被访问到的时候, 才加载对应的组件
+  
+```javascript
+// 方式一: 结合Vue的异步组件和Webpack的代码分析.
+const Home = resolve => { require.ensure(['../components/Home.vue'], () => { resolve(require('../components/Home.vue')) })};
+// 方式二: AMD写法
+const About = resolve => require(['../components/About.vue'], resolve);
+// 方式三: 在ES6中, 我们可以有更加简单的写法来组织Vue异步组件和Webpack的代码分割
+const Home = () => import('../components/Home.vue')
+
+//为了统一管理应该这样写，这样代码更加的清晰
+const Home=()=>import('../components/home')
+const About=()=>import('../components/about')
+
+const routes=[
+    {
+      path:'/home',
+      component:Home
+    }
+] 
+```
+
 ### Vue-router嵌套路由
+
++ 嵌套路由是一个很常见的功能
+  + 比如在home页面中, 我们希望通过/home/news和/home/message访问一些内容
+  + 一个路径映射一个组件, 访问这两个路径也会分别渲染两个组件
+  
+```javascript
+const routes=[
+    {
+      path:'/home',
+      component:Home,
+      children:[
+          {
+            //不需要加/,拼接的时候会自动添加
+            path:'news'，
+            component:News
+          },
+          {
+            ppath:'',
+            component:Message
+          }
+      ]
+    }
+]
+```
 
 ### Vue-router参数传递
 
+#### 传递参数
+
++ 传递参数主要有两种类型: params和query
++ params的类型
+  + 配置路由格式: /router/:id
+  + 传递的方式: 在path后面跟上对应的值
+  + 传递后形成的路径: /router/123, /router/abc
+
++ query的类型
+  + 配置路由格式: /router, 也就是普通配置
+  + 传递的方式: 对象中使用query的key作为传递方式
+  + 传递后形成的路径: /router?id=123, /router?id=abc
+  
+```javascript
+<router-link
+:to="{
+path:'/profile/'+123,
+query:{name:dylan,age:18}
+ }"
+></router-link>
+
+
+//用JavaScript代码传递参数
+methods:{
+  toProfile(){
+    this.#router.push({
+    path:'/profile/'+123,
+    query:{name:dylan,age:18}
+    })
+  }
+}
+```
+
+#### 获取参数
+
++ 获取参数通过$route对象获取的
+  + 在使用了 vue-router 的应用中，路由对象会被注入每个组件中，赋值为 this.$route ，并且当路由切换时，路由对象会被更新
+  + 通过$route获取传递的信息如下：
+
+```javascript
+<p>{{$route.params}}</p>
+<p>{{$route.query}}</p>
+```
+
+#### $router和$route的区别
+
++ $route和$router是有区别的
+  + $router为VueRouter实例，想要导航到不同URL，则使用$router.push方法
+  + $route为当前router跳转对象里面可以获取name、path、query、params等 
+
 ### Vue-router导航守卫
+
++ 我们来考虑一个需求: 在一个SPA应用中, 如何改变网页的标题呢?
+  + 网页标题是通过<title>来显示的, 但是SPA只有一个固定的HTML, 切换不同的页面时, 标题并不会改变
+  + 但是我们可以通过JavaScript来修改<title>的内容.window.document.title = '新的标题'
+  + 那么在Vue项目中, 在哪里修改? 什么时候修改比较合适呢?
+
++ 普通的修改方式
+  + 我们比较容易想到的修改标题的位置是每一个路由对应的组件.vue文件中
+  + 通过mounted声明周期函数, 执行对应的代码进行修改即可
+  + 但是当页面比较多时, 这种方式不容易维护(因为需要在多个页面执行类似的代码)
+  
++ 什么是导航守卫
+  + vue-router提供的导航守卫主要用来监听监听路由的进入和离开的
+  + vue-router提供了beforeEach和afterEach的钩子函数, 它们会在路由即将改变前和改变后触发
+  
++ vue-router提供了beforeEach和afterEach的钩子函数, 它们会在路由即将改变前和改变后触发
+  + 首先, 我们可以在钩子当中定义一些标题, 可以利用meta来定义
+  + 其次, 利用导航守卫,修改我们的标题.
+  
+```javascript
+const routes=[
+    {
+      path:'/home',
+      component:Home,
+      meta:{
+        //定义标题
+        title:'首页'
+      }
+    },
+    {
+          path:'/about',
+          component:About,
+          meta:{
+            title:'关于'
+          }
+        }
+]
+
+//使用钩子函数
+// 1. 导航钩子的三个参数解析
+//    to: 即将要进入的目标的路由对象
+//    from: 当前导航即将要离开的路由对象
+//    next: 调用该方法后, 才能进入下一个钩子
+
+router.beforeEach((to,from,next)=>{
+  window.document.title=to.meta.title
+  next()
+})
+```
+
++ next: 调用该方法后, 才能进入下一个钩子
++ 补充二: 上面我们使用的导航守卫, 被称之为全局守卫
+  + 补充二: 上面我们使用的导航守卫, 被称之为全局守卫
+  + 补充二: 上面我们使用的导航守卫, 被称之为全局守卫
 
 ### keep-alive
 
++ keep-alive 是 Vue 内置的一个组件，可以使被包含的组件保留状态，或避免重新渲染
+  + 它们有两个非常重要的属性
+  + include - 字符串或正则表达，只有匹配的组件会被缓存
+  + exclude - 字符串或正则表达式，任何匹配的组件都不会被缓存
+  
++ router-view 也是一个组件，如果直接被包在 keep-alive 里面，所有路径匹配到的视图组件都会被缓存
++ router-view 也是一个组件，如果直接被包在 keep-alive 里面，所有路径匹配到的视图组件都会被缓存
+
+```javascript
+<keep-alive>
+<router-view>
+<!--所有路径匹配到的视图都会被缓存-->
+</router-view>
+</keep-alive>
+```
+
+## Promise
+
+### 什么是Promise
+
++ ES6中一个非常重要和好用的特性就是Promise
++ Promise到底是做什么的呢？
++ 那什么时候我们会来处理异步事件呢？
+  + 一种很常见的场景应该就是网络请求了。
+  + 我们封装一个网络请求的函数，因为不能立即拿到结果，所以不能像简单的3+4=7一样将结果返回
+  + 所以往往我们会传入另外一个函数，在数据请求成功时，将数据通过传入的函数回调出去
+  + 如果只是一个简单的网络请求，那么这种方案不会给我们带来很大的麻烦
+
++ 当网络请求非常复杂时，就会出现回调地狱
+  + Promise可以以一种非常优雅的方式来解决这个问题。
+  
+### 定时器的异步事件
+
++ 我们先来看看Promise最基本的语法
++ 这里，我们用一个定时器来模拟异步事件
+  + 假设下面的data是从网络上1秒后请求的数据
+  + console.log就是我们的处理方式
+  
++ 这是我们过去的处理方式，我们将它换成Promise代码
+
+```javascript
+setTimeout(function(){
+  let data = 'Hello world'
+  console.log(content);
+},1000)
+
+//改成promise模式
+new Promise((resolve,reject)=>{
+  setTimeout(function() {
+    resolve('hello world')
+    reject('Error Data')
+  },1000)
+}).then(data=>{
+  console.log(data);
+}).catch(error=>{
+  console.log(error);
+})
+```
+
++ new Promise很明显是创建一个Promise对象
++ 小括号中((resolve, reject) => {})也很明显就是一个函数，而且我们这里用的是之前刚刚学习过的箭头函数
+  + 但是resolve, reject它们是什么呢？
+  + 我们先知道一个事实：在创建Promise时，传入的这个箭头函数是固定的（一般我们都会这样写)
+  + resolve和reject它们两个也是函数，通常情况下，我们会根据请求数据的成功和失败来决定调用哪一个
+  
++ 成功还是失败？
+  + 如果是成功的，那么通常我们会调用resolve(messsage)，这个时候，我们后续的then会被回调
+  + 如果是失败的，那么通常我们会调用reject(error)，这个时候，我们后续的catch会被回调
+  
++ 这就是Promise最基本的使用了
+
+### promise的三种状态
+
++ 当我们开发中有异步操作时, 就可以给异步操作包装一个Promise
+  + 当我们开发中有异步操作时, 就可以给异步操作包装一个Promise
+
++ 我们一起来看一下这三种状态
+  + pending：等待状态，比如正在进行网络请求，或者定时器没有到时间
+  + fulfill：满足状态，当我们主动回调了resolve时，就处于该状态，并且会回调.then()
+  + reject：拒绝状态，当我们主动回调了reject时，就处于该状态，并且会回调.catch()
+
+### Promise的链式调用
+
++ 我们在看Promise的流程图时，发现无论是then还是catch都可以返回一个Promise对象
++ 所以，我们的代码其实是可以进行链式调用的
++ 这里我们直接通过Promise包装了一下新的数据，将Promise对象返回了
+  + Promise.resovle()：将数据包装成Promise对象，并且在内部回调resolve()函数
+  + Promise.reject()：将数据包装成Promise对象，并且在内部回调reject()函数
+
 ## vuex
+
+### 认识vuex
+
+#### Vuex是做什么的？
+
++ 官方解释：Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式
+  + 它采用 集中式存储管理 应用的所有组件的状态，并以相应的规则保证状态以一种可预测的方式发生变化
+  Vuex 也集成到 Vue 的官方调试工具 devtools extension，提供了诸如零配置的 time-travel 调试、状态快照导入导出等高级调试功能
+  
++ 状态管理到底是什么？
+  + 状态管理模式、集中式存储管理这些名词听起来就非常高大上，让人捉摸不透
+  + 其实，你可以简单的将其看成把需要多个组件共享的变量全部存储在一个对象里面
+  + 然后，将这个对象放在顶层的Vue实例中，让其他组件可以使用
+  + 那么，多个组件是不是就可以共享这个对象中的所有变量属性了呢
+ 
+ + 等等，如果是这样的话，为什么官方还要专门出一个插件Vuex呢？难道我们不能自己封装一个对象来管理吗？
+  + 当然可以，只是我们要先想想VueJS带给我们最大的便利是什么呢？没错，就是响应式
+  如果你自己封装实现一个对象能不能保证它里面所有的属性做到响应式呢？当然也可以，只是自己封装可能稍微麻烦一些
+  + 不用怀疑，Vuex就是为了提供这样一个在多个组件间共享状态的插件，用它就可以了
+
+#### 管理什么状态呢?
+
++ 有什么状态时需要我们在多个组件间共享的呢？
+  + 如果你做过大型开放，你一定遇到过多个状态，在多个界面间的共享问题
+  + 比如用户的登录状态、用户名称、头像、地理位置信息等等
+  + 比如商品的收藏、购物车中的物品等等
+  + 些状态信息，我们都可以放在统一的地方，对它进行保存和管理，而且它们还是响应式的
+  
+#### 单界面的状态管理
+
++ 我们知道，要在单个组件中进行状态管理是一件非常简单的事情
+  + State：不用多说，就是我们的状态。（你姑且可以当做就是data中的属性）
+  + View：视图层，可以针对State的变化，显示不同的信息。（这个好理解吧？）
+  + Actions：这里的Actions主要是用户的各种操作：点击、输入等等，会导致状态的改变。
+  
+#### 多界面状态管理
+
++ Vue已经帮我们做好了单个界面的状态管理，但是如果是多个界面呢？
+  + Vue已经帮我们做好了单个界面的状态管理，但是如果是多个界面呢？
+  + 不同界面的Actions都想修改同一个状态（Home.vue需要修改，Profile.vue也需要修改这个状态）
+  
++ 也就是说对于某些状态(状态1/状态2/状态3)来说只属于我们某一个试图，但是也有一些状态(状态a/状态b/状态c)属于多个试图共同想要维护的
+  + 也就是说对于某些状态(状态1/状态2/状态3)来说只属于我们某一个试图，但是也有一些状态(状态a/状态b/状态c)属于多个试图共同想要维护的
+  + 但是状态a/状态b/状态c我们希望交给一个大管家来统一帮助我们管理
+  + 没错，Vuex就是为我们提供这个大管家的工具
+  
++ 全局单例模式（大管家）
+  + 我们现在要做的就是将共享的状态抽取出来，交给我们的大管家，统一进行管理
+  + 我们现在要做的就是将共享的状态抽取出来，交给我们的大管家，统一进行管理
+  + 这就是Vuex背后的基本思想。  
+
+
+
+### vuex的基本使用
+
++ 实现一下之前简单的案例，首先，我们需要在某个地方存放我们的Vuex代码
+  + 这里，我们先创建一个文件夹store，并且在其中创建一个index.js文件
+  
++ 其次，我们让所有的Vue组件都可以使用这个store对象
+  + 来到main.js文件，导入store对象，并且放在new Vue中
+  + 这样，在其他Vue组件中，我们就可以通过this.$store的方式，获取到这个store对象了
+  
+```javascript
+import Vuex from 'vuex'
+import Vue from 'vue'
+
+Vue.use(Vuex)
+
+const store=new Vuex.store({
+  state:{
+    count:0
+  },
+  mutations:{
+    increment(state){
+      state.count++
+    },
+    decrement(state){
+      state.count--
+    }
+  }
+})
+//导出store对象
+export  default store
+
+//引入store对象
+import Vue from 'vue'
+import App from './App'
+import store from './store'
+
+new Vue({
+el:'#app',
+store,
+render:h=>h(app)
+})
+
+//在app这个组件中使用
+<template>
+    <div id="app">
+        <p>{{count}}</p>
+        <button @click="increment"></button>
+        <button @click="decrement"></button>
+    </div>
+</template>
+
+<script>
+  export default {
+    name: "App",
+    components:{
+
+    },
+    computed:{
+      count:function () {
+        return this.$store.state.count
+      }
+    },
+    methods:{
+      increment:function () {
+        this.$store.commit('increment')
+      },
+      decrement:function () {
+        this.$store.cmomit('decrement')
+      }
+    }
+  }
+</script>
+
+<style scoped>
+
+</style>
+```
+
++ 我们来对使用步骤，做一个简单的小节
+  1. 提取出一个公共的store对象，用于保存在多个组件中共享的状态
+  2. 将store对象放置在new Vue对象中，这样可以保证在所有的组件中都可以使用到
+  3. 在其他组件中使用store对象中保存的状态即可
+  
++ 通过this.$store.state.属性的方式来访问状态
++ 通过this.$store.commit('mutation中方法')来修改状态
++ 注意事项
+  + 我们通过提交mutation的方式，而非直接改变store.state.count
+  + 这是因为Vuex可以更明确的追踪状态的变化，所以不要直接改变store.state.count的值
+
+
+### vuex的核心改变
+
+1. State
+2. Getters
+3. Mutation
+4. Action
+5. Module
+
+### State
+
++ Vuex提出使用单一状态树, 什么是单一状态树呢
+  + 英文名称是Single Source of Truth，也可以翻译成单一数据源
+  
++ 它是什么呢？我们来看一个生活中的例子
+  + 如果你的状态信息是保存到多个Store对象中的，那么之后的管理和维护等等都会变得特别困难
+  + 所以Vuex也使用了单一状态树来管理应用层级的全部状态
+  + 一状态树能够让我们最直接的方式找到某个状态的片段，而且在之后的维护和调试过程中，也可以非常方便的管理和维护
+
+### Gatters
+
++ 有时候，我们需要从store中获取一些state变异后的状态，比如下面的Store中
+  + 获取学生年龄大于20的个数
+
+### Mutation
+
+### Action
+
+### Module
+
+### 项目结构
+
+## axios
+
+### 认识axios
+
++ 支持多种请求方式
+  + axios(config)
+  + axios.request(config)
+  + axios.get(url[, config])
+  + axios.delete(url[, config])
+  + axios.head(url[, config])
+  + axios.post(url[, data[, config]])
+  + axios.put(url[, data[, config]])
+  + axios.patch(url[, data[, config]])
+
+### 发送基本请求
+
+#### 发送get请求
+
+```javascript
+import axios from 'axios'
+
+
+```
+
+### axios创建实例
+
+### axios拦截器
