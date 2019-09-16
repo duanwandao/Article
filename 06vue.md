@@ -1544,6 +1544,7 @@ const routes=[
     {
       path:'/home',
       component:Home,
+      //meta:元数据（描述数据的数据）
       meta:{
         //定义标题
         title:'首页'
@@ -1564,16 +1565,24 @@ const routes=[
 //    from: 当前导航即将要离开的路由对象
 //    next: 调用该方法后, 才能进入下一个钩子
 
+//前置守卫（guard）
 router.beforeEach((to,from,next)=>{
   window.document.title=to.meta.title
   next()
 })
 ```
 
-+ next: 调用该方法后, 才能进入下一个钩子
++ 补充一: 如果是后置钩子, 也就是afterEach, 不需要主动调用next()函数
 + 补充二: 上面我们使用的导航守卫, 被称之为全局守卫
-  + 补充二: 上面我们使用的导航守卫, 被称之为全局守卫
-  + 补充二: 上面我们使用的导航守卫, 被称之为全局守卫
+  + 路由独享的守卫
+  + 组件内的守卫
+  
+```javascript
+//后置钩子hook
+router.afterEach((to,from)=>{
+  
+})
+```
 
 ### keep-alive
 
@@ -1588,7 +1597,7 @@ router.beforeEach((to,from,next)=>{
 ```javascript
 <keep-alive>
 <router-view>
-<!--所有路径匹配到的视图都会被缓存-->
+//所有路径匹配到的视图都会被缓存
 </router-view>
 </keep-alive>
 ```
@@ -1665,6 +1674,16 @@ new Promise((resolve,reject)=>{
 + 这里我们直接通过Promise包装了一下新的数据，将Promise对象返回了
   + Promise.resovle()：将数据包装成Promise对象，并且在内部回调resolve()函数
   + Promise.reject()：将数据包装成Promise对象，并且在内部回调reject()函数
+
+```javascript
+return new Promise(resolve => {
+  resolve(res+'111')
+})
+//简写如下
+return Promise.resolve(res+'111')
+//继续简写
+return res+'111'
+```
 
 ## vuex
 
