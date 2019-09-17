@@ -1685,6 +1685,32 @@ return Promise.resolve(res+'111')
 return res+'111'
 ```
 
+### Promise的all方法
+
+```javascript
+Promise.all([
+    new Promise((resolve, reject)=>{
+      $ajax({
+      url:'',
+      success:function(data) {
+        resolve(data)
+      }
+      })
+    }),
+    new Promise((resolve, reject)=>{
+          $ajax({
+          url:'url2',
+          success:function(data) {
+            resolve(data)
+          }
+          })
+        })
+]).then((results)=>{
+  results[0]
+  results[1]
+})
+```
+
 ## vuex
 
 ### 认识vuex
@@ -1851,8 +1877,110 @@ render:h=>h(app)
 
 + 有时候，我们需要从store中获取一些state变异后的状态，比如下面的Store中
   + 获取学生年龄大于20的个数
+  
++ 我们可以在Store中定义getters
++ 如果我们已经有了一个获取所有年龄大于20岁学生列表的getters, 那么代码可以这样来写
++ getters默认是不能传递参数的, 如果希望传递参数, 那么只能让getters本身返回另一个函数
++ 比如上面的案例中,我们希望根据ID获取用户的信息
+
+```javascript
+const store =new Vuex.Store({
+  state:{
+    students:[
+      {id:110,name:'why',age:18},
+      {id:111,name:'kobe',age:20},
+      {id:112,name:'lucy',age:25},
+      {id:113,name:'lileu',age:30}
+    ]
+  },
+  ggetters : {
+    more20stu(){
+      return state.students.filter(s=>s.age>=20)
+    }
+  }
+})
+
+```
 
 ### Mutation
+
++ Vuex的store状态的更新唯一方式：提交Mutation
++ Mutation主要包括两部分
+  + 字符串的事件类型（type）
+  + 一个回调函数（handler）,该回调函数的第一个参数就是state
+
+```javascript
+//mutation定义的方式
+  mutations:{
+    increment(state){
+      state.count++
+    }
+  }
+  //mutations更新
+  increment() {
+    this.$store.commit('increment')
+  }
+```
+
++ 在通过mutation更新数据的时候, 有可能我们希望携带一些额外的参数
+  + 参数被称为是mutation的载荷(Payload)
++ Mutation中的代码
++ 但是如果参数不是一个呢?
+  + 比如我们有很多参数需要传递.
+  + 这个时候, 我们通常会以对象的形式传递, 也就是payload是一个对象
+  + 这个时候可以再从对象中取出相关的信息
+  
+```javascript
+  mutations:{
+    increment(state,n){
+      state.count+=n
+    }
+  }
+  increment() {
+    this.$store.commit('increment',2)
+  }
+  
+  //传递多个参数用对象
+mutations:{
+   increment(state,payload){
+     state.count=payload.count
+   }
+ },
+ increment() {
+   this.$store.commit('increment',{count:2})
+ }
+```
+
++ 上面的通过commit进行提交是一种普通的方式
++ Vue还提供了另外一种风格, 它是一个包含type属性的对象
++ Mutation中的处理方式是将整个commit的对象作为payload使用,所以代码没有改变, 依然如下
+
+```javascript
+increment() {
+    this.$store.commit({
+      type : 'increment',
+      count:100
+    })
+```
+
+#### Mutation响应规则
+
++ Vuex的store中的state是响应式的, 当state中的数据发生改变时, Vue组件会自动更新
++ 这就要求我们必须遵守一些Vuex对应的规则
+  + 提前在store中初始化好所需的属性
+  + 当给state中的对象添加新属性时, 使用下面的方式
+    + 方式一: 使用Vue.set(obj, 'newProp', 123)
+    + 方式二: 用新对象给旧对象重新赋值（让旧对象重新指向一个新对象）
+
+#### Mutation常量类型 – 概念
+
++ 在mutation中, 我们定义了很多事件类型(也就是其中的方法名称)
++ 当我们的项目增大时, Vuex管理的状态越来越多, 需要更新状态的情况越来越多, 那么意味着Mutation中的方法越来越多
++ 方法过多, 使用者需要花费大量的经历去记住这些方法, 甚至是多个文件间来回切换, 查看方法名称, 甚至如果不是复制的时候, 可能还会出现写错的情况
++ 在各种Flux实现中, 一种很常见的方案就是使用常量替代Mutation事件的类型
++ 我们可以将这些常量放在一个单独的文件中, 方便管理以及让整个app所有的事件类型一目了然.
++ 们可以创建一个文件: mutation-types.js, 并且在其中定义我们的常量
++ 定义常量时, 我们可以使用ES2015中的风格, 使用一个常量来作为函数的名称
 
 ### Action
 
