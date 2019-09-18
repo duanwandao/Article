@@ -1982,7 +1982,79 @@ increment() {
 + 们可以创建一个文件: mutation-types.js, 并且在其中定义我们的常量
 + 定义常量时, 我们可以使用ES2015中的风格, 使用一个常量来作为函数的名称
 
+#### mutation同步函数
+
++ 通常情况下, Vuex要求我们Mutation中的方法必须是同步方法
+  + 主要的原因是当我们使用devtools时, 可以devtools可以帮助我们捕捉mutation的快照
+  + 但是如果是异步操作, 那么devtools将不能很好的追踪这个操作什么时候会被完成
+
 ### Action
+
++ 我们强调, 不要再Mutation中进行异步操作
+  + 但是某些情况, 我们确实希望在Vuex中进行一些异步操作, 比如网络请求, 必然是异步的. 这个时候怎么处理呢?
+  + Action类似于Mutation, 但是是用来代替Mutation进行异步操作的
+  
++ Action的基本使用代码如下
++ context是什么?
+  + context是和store对象具有相同方法和属性的对象
+  + 也就是说, 我们可以通过context去进行commit相关的操作, 也可以获取context.state等
+
+```javascript
+//在vuex中定义
+actions:{
+  increment(context){
+    context.commit('increment')
+  }
+}
+//在组件中使用
+methods:{
+  increment() {
+    this.$store.dispatch('increment')
+  }
+}
+
+//也可以传递参数
+methods:{
+  increment(){
+    this.$store.dispatch('increment',{ccount:5})
+  }
+}
+//vuex中传递参数的代码
+actions:{
+  increment(context,payload){
+    context.commit('increment',payload)
+  }
+}
+```
+
+#### Action返回的Promise
+
++ 前面我们学习ES6语法的时候说过, Promise经常用于异步操作
+  + 在Action中, 我们可以将异步操作放在一个Promise中, 并且在成功或者失败后, 调用对应的resolve或reject
+  
+```javascript
+actions:{
+  increment(context){
+    return new Promise((resolve)=>{
+      setTimeout(()=>{
+        context.commit('increment')
+        resolve()
+      },1000)
+    })
+  }
+}
+
+
+
+
+methods:{
+  increment(){
+    this.$store.dispatch('increment').then(res=>{
+      console.log('完成了更新');
+    })
+  }
+}
+```
 
 ### Module
 
@@ -2002,16 +2074,221 @@ increment() {
   + axios.put(url[, data[, config]])
   + axios.patch(url[, data[, config]])
 
-### 发送基本请求
-
 #### 发送get请求
 
 ```javascript
 import axios from 'axios'
+//发送没有请求参数
+axios({
+url:'123.170.1.1'
+}).then(res=>{
+  console.log(res);
+})
+//有请求参数
+axios.get('12.712.17',{params:{type:'sell',page:1}})
+.then(res=>{
+  console.log(res);
+}).catch(err=>{
+  console.log(err);
+})
 
 
+
+//发送并发请求
+axios.all([axios.get('1111222'),
+axios.get(411111,{params:{type:'sell',page:2}})])
+.then(axios/spread((res1,res1)=>{
+  console.log(res1);
+  console.log(res2);
+}))
+```
+
+#### 全局配置
+
++ 在开发中可能很多参数都是固定的
++ 这个时候我们可以进行一些抽取, 也可以利用axiox的全局配置
+
+```javascript
+axios.defaults.baseURL ='123.207.32.32:8000'
+axios.defaults.headers.post[‘Content-Type’] = ‘application/x-www-form-urlencoded’;
+
+//请求地址
+url:'/user',
+//请求类型
+method:'get',
+//请根根路径
+baseURL: 'http://www.mt.com/api',
+//请求前的数据处理
+transformRequest:[function(data){}],
+//请求后的数据处理
+transformResponse: [function(data){}],
+//自定义的请求头
+headers:{'x-Requested-With':'XMLHttpRequest'}
+//URL查询对象
+params:{ id: 12 },
+//查询对象序列化函数
+paramsSerializer: function(params){ }
+//request body
+data: { key: 'aa'}
+//超时设置
+timeout: 1000,
+//跨域是否带Token
+跨域是否带Token
+//自定义请求处理
+adapter: function(resolve, reject, config){}
+//身份验证信息
+auth: { uname: '', pwd: '12'}
+//响应的数据格式 json / blob /document /arraybuffer / text / stream
+responseType: 'json'
 ```
 
 ### axios创建实例
 
+```javascript
+//第一次封装
+export  function request(config,success,failure) {
+  const instance=axios.create({
+  baseURL:'12313413',
+  timeout:5000
+  })
+  //发送网络请求
+  instance(config)
+  .then(res=>{
+    success(res)
+  })
+  .catch(err=>{
+    failure(err)
+  })
+}
+
+//使用request模块
+request({
+url:'1113135'
+},res=>{
+  console.log(res);
+},err=>{
+  console.log(err);
+})
+
+
+
+//第二次封装
+export  function request(config) {
+  const instance=axios.create({
+  baseURL:'12313413',
+  timeout:5000
+  })
+  //发送网络请求
+  instance(config.baseConfig)
+  .then(res=>{
+    config.success(res)
+  })
+  .catch(err=>{
+    config.failure(err)
+  })
+}
+
+//使用request模块
+request({
+baseConfig:{
+  
+},
+success:function(res) {
+  
+},
+failure:function(err) {
+  
+}
+})
+
+
+//第三次封装
+export  function request(config) {
+ return new Promise((resolve,reject)=>{
+   //创建axios实例
+    const instance=axios.create({
+     baseURL:'12313413',
+     timeout:5000
+     })
+     //发送网络请求
+     instance(config)
+     .then(res=>{
+       resolve(res)
+     })
+     .catch(err=>{
+       reject(err)
+     })
+ })
+}
+
+//使用request模块
+request({
+url:'4445634635'
+})
+.then(res=>{
+  console.log(res);
+})
+.catch(err=>{
+  console.log(err);
+})
+
+
+//第四次封装
+export  function request(config) {
+ return new Promise((resolve,reject)=>{
+   //创建axios实例
+    const instance=axios.create({
+     baseURL:'12313413',
+     timeout:5000
+     })
+     //发送网络请求
+     return instance(config)
+    
+ })
+}
+
+//使用request模块
+request({
+url:'4445634635'
+})
+.then(res=>{
+  console.log(res);
+})
+.catch(err=>{
+  console.log(err);
+})
+```
+
 ### axios拦截器
+
+```javascript
+export  function request(config) {
+ return new Promise((resolve,reject)=>{
+   //1. 创建axios实例
+    const instance=axios.create({
+     baseURL:'12313413',
+     timeout:5000
+     })
+     //2. axios的拦截器
+     //2.1 请求拦截
+     instance.interceptors.request.use(config=>{
+       //1. 比如config中的一些信息不符合服务器的要求
+       
+       //2. 每次发送网络请求的时候，都希望在界面显示一个请求图标
+       
+       //3. 某些网络请求必须携带一些特殊的信息
+     },err=>{
+       
+     })
+     //2.2 响应拦截
+     instance.interceptors.response.use(res=>{
+       console.log(res);
+     },err=>{
+       console.log(err);
+     })
+     //3. 发送网络请求
+     return instance(config)
+    
+ })
+}
+```
