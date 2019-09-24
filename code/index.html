@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
+  <style>
+  #app{
+    text-indent: 2em;
+  }
+  </style>
 </head>
 <body>
 <!--  <button>-->
@@ -38,25 +43,12 @@
 <!--  </script>-->
 
 
-<div id="app"></div>
-<script>
-  // var box=document.getElementById('app')
-  // console.log(box);
-  var x = 1,
-      y = 2;
-
-  function fn(x) {
-    this.x *= (++x);
-    fn = function (y) {
-      this.y *= (--y);
-      console.log(x + y);
-    }
-    console.log(x + y);
-    return fn;
-  }
-
-  fn(3)(4)
-  console.log(x + y);
-</script>
+<div id="app">
+  汉字汉字汉字汉字汉字汉字汉字汉字汉字
+</div>
+<div>
+  汉字汉字汉字汉字汉字汉字汉字汉字汉字
+</div>
+<script src="index.js"></script>
 </body>
 </html>

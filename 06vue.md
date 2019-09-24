@@ -1322,7 +1322,7 @@ const routes=[
 + 配置解析
   + 我们在routes中又配置了一个映射
   + path配置的是根路径: /
-  + edirect是重定向, 也就是我们将根路径重定向到/home的路径下, 这样就可以得到我们想要的结果了
+  + redirct是重定向, 也就是我们将根路径重定向到/home的路径下, 这样就可以得到我们想要的结果了
   
 ```javascript
 const routes=[
