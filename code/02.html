@@ -7,20 +7,14 @@
   <title>Document</title>
 </head>
 <body>
-  <style type = "text/css">
-    body{
-      color:#333;
-      }
-      #text{
-        color:#f00;
-      }
-      .content{
-        color:#00f;
-      }
-      .gray{
-        color:#666;
-      }
-    </style>
-    <p id = "text" class = "content gray">欢迎大家来到珠峰培训学习！</p>
+  <script>
+let arr=[1,2,3,4,5,6,8,7]
+function cut (n,m,arr){
+  let ary=arr.splice(n-1,m-1)
+  return ary
+}
+let res=cut(2,5,arr)
+console.log(res)
+  </script>
 </body>
 </html>
