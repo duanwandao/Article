@@ -59,4 +59,3 @@ function toString (str){
 }
 let foo = 'get-element-by-id';
 toString(foo);
-

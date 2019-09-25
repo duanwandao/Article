@@ -7,14 +7,37 @@
   <title>Document</title>
 </head>
 <body>
-  <script>
-let arr=[1,2,3,4,5,6,8,7]
-function cut (n,m,arr){
-  let ary=arr.splice(n-1,m-1)
-  return ary
-}
-let res=cut(2,5,arr)
-console.log(res)
-  </script>
+  <div class="box">
+    <!--P：存放生成的车牌号-->
+    <p id="licensePlate"></p>
+    <input type="button" value="摇号" id="shakeBtn"/>
+</div>
+<script>
+    //=>完成你的JS代码，实现老板安排的需求
+    //获取p元素
+    let pdiv=document.getElementById('licensePlate')
+    //获取input元素
+    let btn=document.getElementById('shakeBtn')
+    //定义变量记录点击了多少次
+    let num=0
+    //存放前面的车牌号
+    let arr=['京A','京B','京C','京E','京F','京G','京H','京J','京K']
+    //获取车牌的下标的随机数
+    let arr1=['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','0','1','2','3','4','5','6','7','8','9']
+    btn.onclick=function(){
+      num++
+      if(num <=3){
+        pdiv.innerHTML =arr[Math.floor(Math.random()*arr.length)]
+        +arr1[Math.floor(Math.random()*arr1.length)]
+        +arr1[Math.floor(Math.random()*arr1.length)]
+        +arr1[Math.floor(Math.random()*arr1.length)]
+        +arr1[Math.floor(Math.random()*arr1.length)]
+        +arr1[Math.floor(Math.random()*arr1.length)]
+      }else {
+        this.disabled = true
+        alert('只能摇三次')
+      }
+    }
+</script>
 </body>
 </html>
