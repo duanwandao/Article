@@ -20,7 +20,7 @@ function f1(num, num1) {
 
 f1(num1, num2)
 console.log(num1)//55
-console.log(num2)//66
+console.log(num2)//100
 console.log(num)//报错 num is not defined
 
 
@@ -59,3 +59,30 @@ function toString (str){
 }
 let foo = 'get-element-by-id';
 toString(foo);
+
+/**
+ * 冒泡排序
+ * 1. 让数组中相邻的两个数进行比较，数组中较小的数下沉，数值较大的上浮
+ * 2. 外层循环控制循环次数，内层循环控制相邻的两个数进行比较
+ * 
+ */
+var arr=[1,2,3,4,5]
+//控制轮数
+for(var i=0;i<arr.length-1;i++){
+  //次数
+  for (var j =0;j < arr.length-1-i;j++){
+    //判断前一个数和后一个数
+    if(arr[j]>arr[j+1]){
+      //第三方变量
+      var item =arr[j +1]
+      arr[j+1]=arr[j]
+      arr[j]=item;
+    }
+  }
+}
+
+
+
+/**
+ * 
+ */
