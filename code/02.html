@@ -5,38 +5,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
+  <style>
+  #box li{
+    list-style: none;
+    height: 50px;
+    line-height: 50px;
+  }
+  #box li:nth-child(even){
+    background: pink;
+  }
+  #box li:nth-child(odd){
+    background: lightblue;
+  }
+  #box li:hover{
+    background: red;
+  }
+  </style>
 </head>
 <body>
-  <div class="box">
-    <!--P：存放生成的车牌号-->
-    <p id="licensePlate"></p>
-    <input type="button" value="摇号" id="shakeBtn"/>
-</div>
+  <ul id="box" class="changeBox">
+    <li>我们唱着东方红</li>  
+    <li>当家作主站起来</li> 
+    <li>我们讲着春天的故事</li> 
+    <li>改革开放富起来</li> 
+</ul>
 <script>
-    //=>完成你的JS代码，实现老板安排的需求
-    //获取p元素
-    let pdiv=document.getElementById('licensePlate')
-    //获取input元素
-    let btn=document.getElementById('shakeBtn')
-    //定义变量记录点击了多少次
-    let num=0
-    //存放前面的车牌号
-    let arr=['京A','京B','京C','京E','京F','京G','京H','京J','京K']
-    //获取车牌的下标的随机数
-    let arr1=['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','0','1','2','3','4','5','6','7','8','9']
-    btn.onclick=function(){
-      num++
-      if(num <=3){
-        pdiv.innerHTML =arr[Math.floor(Math.random()*arr.length)]
-        +arr1[Math.floor(Math.random()*arr1.length)]
-        +arr1[Math.floor(Math.random()*arr1.length)]
-        +arr1[Math.floor(Math.random()*arr1.length)]
-        +arr1[Math.floor(Math.random()*arr1.length)]
-        +arr1[Math.floor(Math.random()*arr1.length)]
-      }else {
-        this.disabled = true
-        alert('只能摇三次')
-      }
+    //=>完成你的JS代码，实现相关需求
+
+    //给#box下的li实现奇偶行变色
+    //鼠标滑过li背景高亮展示，鼠标离开回归原有颜色
+    //鼠标点击li弹出 ‘我是第N行’，例如：点击第一个li弹出 ‘我是第1行’...
+    let box=document.getElementById('box')
+    let lis=box.getElementsByTagName('li')
+    for (let i =0;i < lis.length; i++){
+     //利用闭包完好鞥
+      lis[i].onclick = function(i){
+        return function(){
+          alert('我是第'+(i+1)+'行')
+        }
+      }(i)
     }
 </script>
 </body>
