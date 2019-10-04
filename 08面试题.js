@@ -183,11 +183,131 @@ console.log(a[b]) //c
  * 在输入框中如何判断输入的是一个正确的网址例如：用户输入一个字符串，验证是否符合url网址格式
  */
 let str = "http://www.zhufengpeixun.cn/?lx=1&from=wx#video"
+let reg=/^((http|https|ftp):\/\/)?(([\w-]+\.)+[a-z0-9]+)((\/[^/]*)+)?(\?[^#]+)?(#.+)?$/i;
 //url格式
 //1. 协议：// http/https/ftp
 //2. 域名 
 //www.xxx.xx
 //xxx.xx
+//xxx.xxx.xx.xxx.xxx
+//3. 请求路径
+// /index.html
+//4. 问号传参
+//？xxx=xxx&xxx=xxx
+//5. 哈希值
+// #xxx
+
+function Foo (){
+Foo.a=function  (){
+console.log(1)
+}
+this.a=function  (){
+console.log(2)
+}
+}
+//把Foo当做类，在原型上设置共有方法
+Foo.prototype.a = function(){
+	console.log(3)
+}
+//把Foo当做普通对象设置私有的属性方法
+Foo.a=function  (){
+console.log(4)
+}
+Foo.a()//4
+let obj=new Foo()
+obj.a()//2
+Foo.a()//1
+
+/**
+ * 编写代码实现图片懒加载
+ * 为什么做图片的懒加载？
+ * 1. 前端性能优化的重要方案，通过图片或者数据的延时加载，可以加快页面的渲染速度
+ * 2. 只有滑动到某个区域，我们才加载真实的图片，这样也可以节省加载的流量
+ */
+
+/**
+ * 编写一条正则，用来验证此规则，一个6-16位的字符串，必须同时包含有大小写字母和数字
+ */
+
+
+/**
+ * 实现一个$attr(name,value)遍历
+ * 属性为name
+ * 值为value的元素集合
+ */
+let arr=$attr('class','box')//获取页面中所有class为box的元素
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
