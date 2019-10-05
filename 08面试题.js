@@ -404,11 +404,11 @@ console.log(b);
 
 /**
  * == 进行比较的时候，如果左右两边数据类型不一样，则先转化为相同的数据类型，然后再进行比较
- * 1. {} == {} 两个对象进行比较，比较的是堆内存的地址
- * 2. null == undefined 相等的 在===下面不相等
- * 3. NaN == NaN 不相等 NaN和谁都不相等
- * 4. [12] == '12'对象和字符串比较是把对象转化为字符串再进行比较
- * 5. 剩余所有的情况在进行比较的时候，都是转化为数字（前提数据类型不一样）
+ * //1. {} == {} 两个对象进行比较，比较的是堆内存的地址
+ * //2. null == undefined 相等的 在===下面不相等
+ * //3. NaN == NaN 不相等 NaN和谁都不相等
+ * //4. [12] == '12'对象和字符串比较是把对象转化为字符串再进行比较
+ * //5. 剩余所有的情况在进行比较的时候，都是转化为数字（前提数据类型不一样）
  * 		对象转数字：先转化为字符串，然后在转化为数字
  * 		字符串转数字 只要出现一个非数字字符，结果就是NaN
  * 		布尔转数字 true==1  false ==0
@@ -426,99 +426,246 @@ console.log(b);
 //     console.log(1)
 // }
 //第二种方法shift 删除数组的第一项，把删除的内容返回，原有数组改变
-let a=[1,2,3]
-a.toString=a.shift
+// let a=[1,2,3]
+// a.toString=a.shift
+// if(a == 1 && a== 2 && a == 3){
+//     console.log(1)
+// }
+//第三种方法
+/**
+ * es6中新增的的一些方法
+ * Array.from()
+ * Array.isArray()
+ * String.fromCharCdoe
+ * Object.create()
+ * Object.defineProperty
+ */
+let n=0
+Object.defineProperty(window,'a',{
+	get:function  (){
+		return ++n
+	}
+})
 if(a == 1 && a== 2 && a == 3){
     console.log(1)
 }
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Array.prototype.push=fn(val){
+    this[this.length]=val
+    //length在自身的基础上加1
+    return this.length
+}
+
+
+
+
+let obj={
+    2:3,//--1
+    3:4,//-2
+    length:2,//--4
+    //不知道什么意思了，把方法实行一遍就知道了
+    push:Array.prototype.push
+}
+obj.push(1)
+obj.push(2)
+console.log(obj)
+
+
+/**
+ * 三大算法
+ */
+//冒泡排序的思想：让数组中的当前项和后一项进行比较，如果当前项比后一项大，则两项交换位置
+let arr=[12,8,24,16,1]
+/**
+ * bubble实现冒泡排序
+ * @param arr 需要排序的数组
+ * @return 排序后的新数组
+ */
+function bubble(arr) {
+    //外层循环循环几次
+    for (let i=0;i<arr.length-1;i++){
+        //内层循环控制每一轮的次数
+        for (let j=0;j<arr.length-1-i;j++){
+            if (arr[j]>arr[j+1]){
+            //当前项大于后一项
+                temp=arr[j]
+                arr[j]=arr[j+1]
+                arr[j+1]=temp
+            }
+        }
+    }
+    return arr
+}
+
+
+//插入排序
+/**
+ * insert插入排序
+ * @param arr 需要排序的数组
+ * @returns {*} 返回排序后的新数组
+ */
+function insert(arr) {
+    //1. 准备一个新数组，用来存储抓到手里的牌，开始先抓一张牌进来
+    let handle=[]
+    handle.push(arr[0])
+    //2. 从第二项开始一次抓牌，一直到把牌面上的牌抓光
+    for (let i=1;i<arr.length;i++){
+        //A是新抓的牌
+        let A=arr[i]
+        //和handle手里的牌一次比较（从后向前）
+        for (let j=handle.length-1;j>=0;j--){
+            //每一次要比较的手里的牌
+            let B=handle[j]
+            //如果当前新牌A比要比较的牌B大，把A放到B的后面
+            if (A>B){
+                handle.splice(j+1,0,A)
+                break
+            }
+            //已经比到了第一项了，我们把新牌A放到最前面即可
+            if (j === 0){
+                handle.unshift(A)
+            }
+        }
+    }
+    return handle
+}
+
+
+
+//[12,8,15,16,1,24]
+//快速排序：找到数组的中间项，把她从原来数组中移除，获取这一项的结果（15）然后拿出数组中的每一项和中间项比较，小的放左边，大的放右边，左右两边继续这个操作
+/**
+ * quick 快速排序
+ * @param arr 需要排序的数组
+ * @return 排序后的数组
+ */
+function quick(arr) {
+    //4. 结束递归，当arr中小于等于一项的时候，则不处理
+    if (arr.length<=1){
+        return arr
+    }
+    //1. 找到数组中的中间项，在原有的数组中把它移除
+    let middleIndex=Math.floor(arr.length/2)
+    //删除的这一项数组的元素
+    let middleValue=arr.splice(middleIndex,1)[0]
+    //2. 准备左右两个数组，循环剩下数组中的每一项，比当前项小的放在左边数组，比当前项大的放右边数组
+    let arrLeft=[]
+    let arrRight=[]
+    for (let i=0;i<arr.length;i++){
+        let item=arr[i]
+        item<middleValue?arrLeft.push(item):arrRight.push(item)
+    }
+    //3. 递归方式让左右两边的数组持续这样处理，一直到左右两边都排好序为止（最后让左边+中间+右边拼接成后的结果）
+    return quick(arrLeft).concat(middleValue,quick(arrRight))
+}
+
+
+/**
+ * 某公司的1月到12月的销售额存在一个对象里面
+ * {
+ *   1:222，
+ *   2:123，
+ *   5:888
+ * }
+ * 请把数据处理为如下结构[222,123,null,null,888,null,null,null,null,null,null,null]
+ */
+let obj={
+    1:222,
+    2:123,
+    5:888
+}
+let arr=new Array(12).fill(null).map((item,index)=>{
+    return obj[index+1] || null
+})
+//第二种方法
+let obj={
+    1:222,
+    2:123,
+    5:888
+}
+obj.length=13
+let arr=Array.from(obj).slice(1).map(item=>{
+   return  typeof item === 'undefined'?null:item
+})
+
+//第三种方法
+let arr=new Array(12).fill(null)
+Object.keys(obj).forEach(item=>{
+    arr[item-1]=obj[item]
+})
+
+
+/**
+ * 给定两个数组，写一个方法来计算他们的交集 思考题 交差并补
+ */
+let num1=[1,2,3,1]
+let num2=[2,2]
+//==>输出结果[2,2]
+let arr=[]
+// for (let i=0;i<num1.length;i++){
+//     let item1=num1[i]
+//     for (let k=0;k<num2.length;k++){
+//         let item2=num2[k]
+//         if (item1 === item2){
+//             arr.push(item1)
+//             break
+//         }
+//     }
+// }
+
+num1.forEach(item=>{
+    num2.includes(item)?arr.push(item):null
+})
+
+
+/**
+ * 旋转数组
+ * 给定一个数组，将数组中的元素向右移动K个位置，其中k是非负数
+ * 输入[1,2,3,4,5,6,7]和k=3
+ * 输出[5,6,7,1,2,3,4]
+ * 解释
+ * 向右旋转1步[7,1,2,3,4,5,6]
+ * 向右旋转2步[6,7,1,2,3,4,5]
+ * 向右旋转3步[5,6,7,1,2,3,4]
+ * 
+ */
+
+function rotate(k) {
+    //参数k处理
+    if (k<0||k===0||k === this.length){
+        return this
+    }
+    if (k>this.length){
+        k=k%this.length
+    }
+    //旋转数组
+    //return this.slice(-k).concat(this.slice(0,this.length-k))
+    //return [...this.splice(this.length-k),...this]
+    //两种循环都可以
+    for (var i=0;i<k;i++){
+        this.unshift(this.pop())
+    }
+    //用数组方法开启循环
+    new Array(k).fill('').forEach(()=>{
+        this.unshift(this.pop())
+    })
+    return this
+}
+Array.prototype.rotate=rotate
+
+
+/**
+ * 请实现一个add函数，满足以下功能
+ *
+ */
+add(1)//1
+add(1)(2)//3
+add(1)(2)(3)//6
+add(1)(2,3)//6
+add(1,2)(3)//6
+add(1,2,3)//6
 
 
 
