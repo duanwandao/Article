@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .layout .main{
+            display: grid;
+            width: 100%;
+            grid-template-rows: 300px;
+            grid-template-columns: 300px auto 300px;
+        }
+        .left{
+            background: red;
+        }
+        .right{
+            background: blue;
+        }
+        .center{
+            background: green;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout">
+        <div class="main">
+            <div class="left"></div>
+            <div class="center">
+                <h1>grid布局</h1>
+                1.这是三栏中间定位中间部分
+                2.这是三栏中间定位中间部分
+            </div>
+            <div class="right"></div>
+        </div>
+    </div>
+</body>
+
+</html>
