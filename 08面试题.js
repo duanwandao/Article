@@ -2092,3 +2092,71 @@ console.log(x);
 //flex和table布局可以使用
 //他们的兼容性
 //
+
+
+//谈谈你对css盒模型的认识
+//1.  标准模型+IE模型
+/**
+ * 标准模型和IE模型的区别在于宽高的计算是不同的，标准盒子的宽度就是content的宽度，不包含padding和border
+ * IE盒子计算宽度包含padding和border
+ * box-sizing:content-box;
+ * box-sizing:border-box;
+ */
+//2. 标准模型和IE模型的区别
+//3. css如何设置这两种模型
+//4. js如何设置获取盒模型对应的宽高
+/**
+ * div.style.width/height(只能获取到内联样式)
+ * div.currentStyle.width/height(行内、内联、外联的样式都可以获取到，缺点只有IE支持)
+ * window.getComputedStyle(div).width/height(这个兼容火狐谷歌)
+ * div.getBoundingClientRect().width/height(计算一个元素的绝对位置)
+ */
+//5. 根据盒模型解释边距重叠
+/**
+ *
+ */
+//6. BFC
+
+//DOM事件类
+/**
+ * 基本概念:DOM事件的级别
+ * dom0    element.onclick=function(){}
+ * dom2    element.addEventListener('click',function(){},false)
+ * dom3    element.addEventListener('keyup',function(){},false)
+ * dom事件模型
+ * 捕获--目标--冒泡
+ * dom事件流
+ * 事件通过捕获到达目标阶段，从目标元素上传到window对象
+ * 描述dom时间捕获的具体流程
+ * window--document--HTML--body--按照结构一层一层往下传--目标元素--
+ * (body节点怎么获取？document.body  HTML节点怎么获取？document.documentElement)
+ * event对象的常见应用
+ * event.preventDefault() 阻止默认事件
+ * event.stopPropagetion() 阻止冒泡
+ * event.stopImmediatePropagetion() 事件优先级
+ * event.currentTarget 当前所绑定的事件
+ * event.target 当前被点击的元素
+ * 自定义事件
+ * var eve=new Event('custome')只能指定事件名，不能传递数据想要用的话就要用customEvent
+ * div.addEventListener('custome',function(){console.log(1)})
+ * div.dispatchEvent(eve)
+ */
+
+
+//原型链类
+/**
+ * 创建对象的几种方法
+ * 字面量var o={}
+ * var o1=new Object({})
+ * 构造函数new创建
+ *
+ * 原型、构造函数、实例、原型链
+ * instanceof的原理
+ */
+
+
+
+
+
+
+
