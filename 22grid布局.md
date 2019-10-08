@@ -22,7 +22,7 @@ Flex 布局是轴线布局，只能指定"项目"针对轴线的位置，可以�
 ### 2.5 网格轨道(Grid Track)
 两条相邻网格线之间的空间。你可以把它们想象成网格的列或行
 
-### 网格单元格(Grid Cell)
+### 2.6 网格单元格(Grid Cell)
 行和列的交叉区域，称为"单元格"（cell）  
 正常情况下，n行和m列会产生n x m个单元格。比如，3行3列会产生9个单元格
 
@@ -254,4 +254,200 @@ grid-gap: <grid-row-gap> <grid-column-gap>;
 **如果grid-gap省略了第二个值，浏览器认为第二个值等于第一个值**  
 **根据最新标准，上面三个属性名的grid-前缀已经删除，grid-column-gap和grid-row-gap写成column-gap和row-gap，grid-gap写成gap。**
 
-### 4.6 
+### 4.6 justify-items 属性，align-items 属性，place-items 属性
+justify-items属性设置单元格内容的水平位置（左中右），align-items属性设置单元格内容的垂直位置（上中下）。  
+语法如下：
+```css
+.container {
+  justify-items: start | end | center | stretch;
+  align-items: start | end | center | stretch;
+}
+```
+这两个属性的写法完全相同，都可以取下面这些值：  
++ start：对齐单元格的起始边缘
++ end：对齐单元格的结束边缘
++ center：单元格内部居中
++ stretch：拉伸，占满单元格的整个宽度（默认值）  
+place-items 是设置 align-items 和 justify-items 的简写形式。  
+```css
+place-items: <align-items> <justify-items>;
+下面是一个例子
+place-items: start end;
+```
+如果省略第二个值，则浏览器认为与第一个值相等  
+
+### 4.7 justify-content 属性，align-content 属性，place-content 属性
+justify-content属性是整个内容区域在容器里面的水平位置（左中右），align-content属性是整个内容区域的垂直位置（上中下）  
+```css
+.container {
+  justify-content: start | end | center | stretch | space-around | space-between | space-evenly;
+  align-content: start | end | center | stretch | space-around | space-between | space-evenly;  
+}
+```
+这两个属性的写法完全相同，都可以取下面这些值:
++ start - 对齐容器的起始边框
++ end - 对齐容器的结束边框
++ center - 容器内部居中
++ stretch - 项目大小没有指定时，拉伸占据整个网格容器
++ space-around - 每个项目两侧的间隔相等。所以，项目之间的间隔比项目与容器边框的间隔大一倍
++ space-between - 项目与项目的间隔相等，项目与容器边框之间没有间隔
++ space-evenly - 项目与项目的间隔相等，项目与容器边框之间也是同样长度的间隔。  
+place-content属性是align-content属性和justify-content属性的合并简写形式  
+```css
+place-content: <align-content> <justify-content>
+
+place-content: space-around space-evenly;
+```
+如果省略第二个值，浏览器就会假定第二个值等于第一个值  
+
+### 4.8 grid-auto-columns 属性，grid-auto-rows 属性
+有时候，一些项目的指定位置，在现有网格的外部。比如网格只有3列，但是某一个项目指定在第5行。这时，浏览器会自动生成多余的网格，以便放置项目。  
+grid-auto-columns属性和grid-auto-rows属性用来设置，浏览器自动创建的多余网格的列宽和行高。它们的写法与grid-template-columns和grid-template-rows完全相同。如果不指定这两个属性，浏览器完全根据单元格内容的大小，决定新增网格的列宽和行高。  
+语法：
+```css
+值：
+<track-size>：可以是长度值，百分比，或者等份网格容器中可用空间的分数（使用 fr 单位）
+.container {
+  grid-auto-columns: <track-size> ...;
+  grid-auto-rows: <track-size> ...;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 100px 100px 100px;
+  grid-template-rows: 100px 100px 100px;
+  grid-auto-rows: 50px; 
+}
+```
+上面代码指定新增的行高统一为50px（原始的行高为100px）。
+
+### 4.9 grid-auto-flow属性  
+如果你有一些没有明确放置在网格上的网格项(grid items)，自动放置算法 会自动放置这些网格项。该属性控制自动布局算法如何工作。  
+```css
+值：
+row：告诉自动布局算法依次填充每行，根据需要添加新行 （默认）
+column：告诉自动布局算法依次填入每列，根据需要添加新列
+dense：告诉自动布局算法在稍后出现较小的网格项时，尝试填充网格中较早的空缺
+.container {
+  grid-auto-flow: row | column | row dense | column dense
+}
+```
+
+### 4.10 grid属性  
+在一个声明中设置所有以下属性的简写： grid-template-rows, grid-template-columns, grid-template-areas, grid-auto-rows, grid-auto-columns, 和 grid-auto-flow 。（注意：您只能在单个网格声明中指定显式或隐式网格属性）。  
+```css
+值：
+none：将所有子属性设置为其初始值。
+<grid-template>：与grid-template 简写的工作方式相同。
+<grid-template-rows> / [ auto-flow && dense? ] <grid-auto-columns>? ：将grid-template-rows 设置为指定的值。 如果 auto-flow 关键字位于斜杠的右侧，则会将 grid-auto-flow 设置为 column。 如果另外指定了 dense 关键字，则自动放置算法使用 “dense” 算法。 如果省略 grid-auto-columns ，则将其设置为 auto。
+[ auto-flow && dense? ] <grid-auto-rows>? / <grid-template-columns>：将 grid-template-columns 设置为指定值。 如果 auto-flow 关键字位于斜杠的左侧，则会将grid-auto-flow 设置为 row 。 如果另外指定了 dense 关键字，则自动放置算法使用 “dense” 打包算法。 如果省略 grid-auto-rows ，则将其设置为 auto。
+以下代码是等效的：
+.container {
+  grid: 100px 300px / 3fr 1fr;
+}
+.container {
+  grid-template-rows: 100px 300px;
+  grid-template-columns: 3fr 1fr;
+}
+
+.container {
+  grid: auto-flow / 200px 1fr;
+}
+.container {
+  grid-auto-flow: row;
+  grid-template-columns: 200px 1fr;
+}
+```
+
+## 5. 子元素 网格项(Grid Items) 属性
+> 注意：float，display: inline-block，display: table-cell，vertical-align 和 column-* 属性对网格项无效。  
+
+### 5.1 grid-column-start / grid-column-end / grid-row-start / grid-row-end
+项目的位置是可以指定的，具体方法就是指定项目的四个边框，分别定位在哪根网格线
+```css
+grid-column-start属性：左边框所在的垂直网格线
+grid-column-end属性：右边框所在的垂直网格线
+grid-row-start属性：上边框所在的水平网格线
+grid-row-end属性：下边框所在的水平网格线
+这四个属性的值还可以使用span关键字，表示"跨越"，即左右边框（上下边框）之间跨越多少个网格。
+值：
+<line> ：可以是一个数字引用一个编号的网格线，或者一个名字来引用一个命名的网格线
+span <number> ：该网格项将跨越所提供的网格轨道数量
+span <name> ：该网格项将跨越到它与提供的名称位置
+auto：表示自动放置，自动跨度，默认会扩展一个网格轨道的宽度或者高度
+.item {
+  grid-column-start: <number> | <name> | span <number> | span <name> | auto
+  grid-column-end: <number> | <name> | span <number> | span <name> | auto
+  grid-row-start: <number> | <name> | span <number> | span <name> | auto
+  grid-row-end: <number> | <name> | span <number> | span <name> | auto
+}
+使用这四个属性，如果产生了项目的重叠，则使用z-index属性指定项目的重叠顺序。
+```
+
+### 5.2 grid-column 属性，grid-row 属性
+grid-column属性是grid-column-start和grid-column-end的合并简写形式，grid-row属性是grid-row-start属性和grid-row-end的合并简写形式  
+```css
+值：
+<start-line> / <end-line>：每个网格项都接受所有相同的值，作为普通书写的版本，包括跨度
+.item {
+  grid-column: <start-line> / <end-line> | <start-line> / span <value>;
+  grid-row: <start-line> / <end-line> | <start-line> / span <value>;
+}
+.item-c {
+  grid-column: 3 / span 2;
+  grid-row: 3 / 4;
+}
+上面代码表示从第三条列网格线开始跨两列，从第三条网格线开始到第四条
+```
+
+### 5.3 grid-area
+grid-area属性指定项目放在哪一个区域，grid-area属性还可用作grid-row-start、grid-column-start、grid-row-end、grid-column-end的合并简写形式，直接指定项目的位置。  
+```css
+.item {
+  grid-area: <row-start> / <column-start> / <row-end> / <column-end>;
+}
+.item-1 {
+  grid-area: 1 / 1 / 3 / 3;
+}
+```
+
+### 5.4 justify-self 属性，align-self 属性，place-self 属性
+justify-self属性设置单元格内容的水平位置（左中右），跟justify-items属性的用法完全一致，但只作用于单个项目。  
+align-self属性设置单元格内容的垂直位置（上中下），跟align-items属性的用法完全一致，也是只作用于单个项目。
+```css
+.item {
+  justify-self: start | end | center | stretch;
+  align-self: start | end | center | stretch;
+}
+这两个属性都可以取下面四个值:
+start：对齐单元格的起始边缘。
+end：对齐单元格的结束边缘。
+center：单元格内部居中。
+stretch：拉伸，占满单元格的整个宽度（默认值）。
+```
+place-self属性是align-self属性和justify-self属性的合并简写形式  
+```css
+值：
+auto – 布局模式的 “默认” 对齐方式。
+<align-self> <justify-self>：第一个值设置 align-self 属性，第二个值设置 justify-self 属性。如果省略第二个值，则将第一个值同时分配给这两个属性。
+.item-a {
+  place-self: center;
+}
+.item-a {
+  place-self: center stretch;
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+## 6. 参考链接：  
+[阮一峰CSS Grid 网格布局教程](http://www.ruanyifeng.com/blog/2019/03/grid-layout-tutorial.html)  
+[CSS Grid 布局完全指南(图解 Grid 详细教程)](https://www.html.cn/archives/8510/)

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>grid布局</title>
+		<style type="text/css">
+			.container{
+				/*设置为grid布局*/
+				display: grid;
+				/*设置为12列。每一列均等分*/
+				grid-template-columns: repeat(12,1fr);
+				/*设置为三行每行高度*/
+				grid-template-rows: 50px 350px 50px;
+				/*行间距与列间距都是5px*/
+				grid-gap: 5px;
+				grid-template-areas:
+					"h h h h h h h h h h h h"
+					"m m c c c c c c c c c c"
+					"f f f f f f f f f f f f"
+							;
+			}
+			.header{
+				grid-area: h;
+				background: red;
+			}
+			.menu{
+				grid-area: m;
+				background: blue;
+			}
+			.content{
+				grid-area: c;
+				background: green;
+			}
+			.footer{
+				grid-area: f;
+				background: yellow;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="header">HEADER</div>
+			<div class="menu">MENU</div>
+			<div class="content">CONTENT</div>
+			<div class="footer">FOOTER</div>
+		</div>
+	</body>
+</html>
