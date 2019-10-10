@@ -30,21 +30,62 @@
     <li>改革开放富起来</li> 
 </ul>
 <script>
-    //=>完成你的JS代码，实现相关需求
+  /*
+* call做了什么？
+* 将函数设为对象的属性
+* 执行，删除这个属性
+* 指定this到函数并传入给定参数执行函数
+* 如果不穿参数，默认指向window
+*
+* */
 
-    //给#box下的li实现奇偶行变色
-    //鼠标滑过li背景高亮展示，鼠标离开回归原有颜色
-    //鼠标点击li弹出 ‘我是第N行’，例如：点击第一个li弹出 ‘我是第1行’...
-    let box=document.getElementById('box')
-    let lis=box.getElementsByTagName('li')
-    for (let i =0;i < lis.length; i++){
-     //利用闭包完好鞥
-      lis[i].onclick = function(i){
-        return function(){
-          alert('我是第'+(i+1)+'行')
-        }
-      }(i)
-    }
+  Function.prototype.myCall=function (obj,...args) {
+    //判断传过来的对象 如果未空则指向window
+    obj=obj || window
+    //将调用call方法的函数绑定到传入的对象中的键值对中
+    obj.fn=this
+    //执行调用call方法的函数并且将返回值保存下来
+    const result=obj.fn(...args)
+    //删除这个属性
+    delete obj.fn
+    //将返回值返回出去
+    return result
+  }
+
+  function consoleLog() {
+    console.log('输出'+this.value)
+  }
+  let demo={
+    value:'dylan'
+  }
+  consoleLog.myCall(demo)//输出dylan
+
+  /*
+  * 另一个问题：
+  * 为什么一个call输出1 两个call输出2呢？
+ */
+function fn1(){
+    console.log(1);
+}
+function fn2(){
+    console.log(2);
+}
+fn1.call(fn2);     //输出 1
+fn1.call.call(fn2);  //输出 2
+  /**
+   * 第一个fn1.call(fn2);执行结合上面我们自己实现的call走一下步骤：
+   * 1.传入进来的fn2是个函数不为空
+   * 2. fn2.fn=fn1
+   * 3. fn1执行
+   * 4. 删除fn2.fn
+   * 5.返回fn1执行的返回值
+   *
+   *
+   * 第二个fn1.call.call(fn2);执行：
+   * 1. 传入fn2 不为空
+   * 2. fn2.fn=fn1.call
+   * 3. 执行fn1.call()
+   */
 </script>
 </body>
 </html>
