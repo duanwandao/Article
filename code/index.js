@@ -220,3 +220,11 @@ let s1=_sub()
 
 
 
+
+for(var i=0;i<10;i++){
+    (function (num){
+        setTimeout(function(){
+            console.log(num)
+        },10)
+    })(i)
+}
