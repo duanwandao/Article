@@ -49,6 +49,30 @@
 <div>
   汉字汉字汉字汉字汉字汉字汉字汉字汉字
 </div>
-<script src="index.js"></script>
+<script src="https://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript">
+	/**
+	 * 第一步：找到北京的id
+	第二步：根据北京的id -> 找到北京公司的id
+   第三步：根据北京公司的id -> 找到北京公司的详情
+   目的：模拟链式调用、回调地狱
+	 */
+	//请求第一个API,地址在北京的公司的ID
+	$.ajax({
+		url:'https://www.easy-mock.com/mock/5a52256ad408383e0e3868d7/lagou/city',
+		success(resCity){
+			let findCityId=resCity.filter(item=>{
+				If(item.id == 'ci'){
+					return item
+				}
+			})[0].id
+			$.ajax({
+				
+			})
+			
+			
+		}
+	})
+</script>
 </body>
 </html>

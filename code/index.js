@@ -228,3 +228,134 @@ for(var i=0;i<10;i++){
         },10)
     })(i)
 }
+
+
+
+
+
+/**
+ * apply方法的实现
+ * 
+ */
+
+
+/**
+ * bind方法的实现
+ * bind() 方法会创建一个新函数。当这个新函数被调用时，bind() 的第一个参数将作为它运行时的 this，之后的一序列参数将会在传递的实参前传入作为它的参数。
+ * 特点：
+ * 1. 返回一个函数
+   2. 可以传入参数
+ */
+//返回函数的实现
+var foo={
+	value:1
+}
+function bar(){
+	console.log(this.value);
+}
+
+var bindFoo=bar.bind(foo)
+bindFoo()//1
+
+//根据此我们可以得出
+Function.prototype.myBind=function(context){
+	var self=this
+	return function(){
+	    //之所以 return self.apply(context)，是考虑到绑定函数可能是有返回值的
+		return self.apply(context)
+	}
+}
+/**
+ * 在bind的时候可以传递参数，在执行bind返回的函数的时候也是可以传递参数的
+ */
+
+//第二版传参处理
+
+Function.prototype.bind2=function (context) {
+    var selt=this
+    var args=Array.prototype.slice.call(arguments,1)
+    
+    return function () {
+        var bindArgs=Array.prototype.slice.call(arguments)
+        return self.apply(context,args.concat(bindArgs))
+    }
+}
+
+//构造函数效果的模拟实现
+/**
+ * 完成了这两点，最难的部分到啦！因为 bind 还有一个特点，就是：一个绑定函数也能使用new操作符创建对象：这种行为就像把原函数当成构造器。提供的 this 值被忽略，同时调用时的参数被提供给模拟函数
+ * 也就是说当 bind 返回的函数作为构造函数的时候，bind 时指定的 this 值会失效，但传入的参数依然生效
+ */
+//第三版
+Function.prototype.bind3=function (context) {
+    var self=this
+    var args=Array.prototype.slice.call(arguments,1)
+    
+    var fbound=function () {
+        var bindArgs=Array.prototype.slice.call(arguments)
+        // 当作为构造函数时，this 指向实例，此时结果为 true，将绑定函数的 this 指向该实例，可以让实例获得来自绑定函数的值
+        // 以上面的是 demo 为例，如果改成 `this instanceof fBound ? null : context`，实例只是一个空对象，将 null 改成 this ，实例会具有 habit 属性
+        // 当作为普通函数时，this 指向 window，此时结果为 false，将绑定函数的 this 指向 context
+        return self.apply(this instanceof fbound?this:context,args.concat(bindArgs))
+    }
+}
+
+//构造函数效果的优化实现
+// 第四版
+Function.prototype.bind4 = function (context) {
+    
+    var self = this;
+    var args = Array.prototype.slice.call(arguments, 1);
+    
+    var fNOP = function () {};
+    
+    var fBound = function () {
+        var bindArgs = Array.prototype.slice.call(arguments);
+        return self.apply(this instanceof fNOP ? this : context, args.concat(bindArgs));
+    }
+    
+    fNOP.prototype = this.prototype;
+    fBound.prototype = new fNOP();
+    return fBound;
+}
+
+
+//最终代码
+Function.prototype.bind5 = function (context) {
+    
+    if (typeof this !== "function") {
+        throw new Error("Function.prototype.bind - what is trying to be bound is not callable");
+    }
+    
+    var self = this;
+    var args = Array.prototype.slice.call(arguments, 1);
+    
+    var fNOP = function () {};
+    
+    var fBound = function () {
+        var bindArgs = Array.prototype.slice.call(arguments);
+        return self.apply(this instanceof fNOP ? this : context, args.concat(bindArgs));
+    }
+    
+    fNOP.prototype = this.prototype;
+    fBound.prototype = new fNOP();
+    return fBound;
+}
+
+
+
+
+let p1=new Promise(resolve=>{
+	setTimeout(()=>{
+		resolve('p1')
+	},1000)
+})
+let p1=new Promise(resolve=>{
+	setTimeout(()=>{
+		resolve('p2')
+	},2000)
+})
+
+Promise.race([p1,p2]).then(value=>{
+	console.log(value);
+})
