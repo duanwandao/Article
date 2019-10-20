@@ -359,3 +359,9 @@ let p1=new Promise(resolve=>{
 Promise.race([p1,p2]).then(value=>{
 	console.log(value);
 })
+
+
+
+
+
+
