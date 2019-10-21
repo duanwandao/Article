@@ -11,7 +11,7 @@ Vue数据双向绑定通过‘数据劫持’ + 订阅发布模式实现
 2. es6中的Proxy对象
 
 ## 发布订阅模式  
-义：对象间的一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都将得到通知  
+定义：对象间的一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都将得到通知  
 订阅发布模式中事件统一由处理中心处理，订阅者发布者互不干扰。  
 优点：实现更多的控制，做权限处理，节流控制之类，例如：发布了很多消息，但是不是所有订阅者都要接收
 
@@ -40,5 +40,34 @@ let event = {
       fn(args)
     })
   }
+}
+```
+
+## Object.defineProperty
+
+```javascript
+let obj={
+  name:'dylan',
+  age:26
+}
+//数据劫持
+function observe(obj){
+  if(typeof obj ==='object'){
+    //重新定义属性
+    for(let key in obj){
+      defineReactive(obj,key,obj[key])
+    }
+  }
+}
+//defineproperty
+function defineReactive(obj,key,value){
+  Object.defineProperty(obj,key,{
+    get(){
+      return value
+    }
+    set(newValue){
+      value=newValue
+    }
+  })
 }
 ```
