@@ -31,7 +31,7 @@ BFC通俗讲就是块级格式化上下文
         width: 100px;
         height: 100px;
         margin: 100px;
-				background: red;
+		background: red;
     }
     </style>
 		<body>
@@ -58,9 +58,9 @@ Box垂直方向的距离由margin决定。属于同一个BFC(上例中是body根
     </style>
 		<body>
 		    <p>111</p>
-				<div class="wrap">
-					<p>111</p>
-				</div>
+			<div class="wrap">
+				<p>111</p>
+			</div>
 		</body>
 ```  
 ![15705116771b90621825316d51c.png](https://www.kanjiantu.com/images/2019/10/08/15705116771b90621825316d51c.png)  

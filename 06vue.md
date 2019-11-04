@@ -43,9 +43,9 @@
 > 事物从诞生到消亡的整个过程  
 
 + beforeCreate 创建实例之前执行的钩子函数
-+ created 实例创建完成后执行的钩子
-+ beforeMount 将编译完成的HTML挂载到对应虚拟dom时候出发的钩子（此时页面并没有内容）
-+ mounted 编译好的HTML挂载到页面完成后之后执行的事件钩子，次钩子函数中一般会做一些ajax请求获取数据进行数据初始化（mounted在整个实例中只执行一次）
++ created 实例创建完成后执行的钩子函数
++ beforeMount 将编译完成的HTML挂载到对应虚拟dom时候触发的钩子（此时页面并没有内容）
++ mounted 编译好的HTML挂载到页面完成后之后执行的事件钩子，此钩子函数中一般会做一些ajax请求获取数据进行数据初始化（mounted在整个实例中只执行一次）
 + beforeUpdate 更新之前的钩子
 + updated 更新之后的钩子
 + beforeDestroy 实例销毁之前执行的钩子
@@ -145,7 +145,7 @@
   > 在某些情况，我们可能需要对数据进行一些转化后再显示，或者需要将多个数据结合起来进行显示，这样在标签中写就不合适了，需要计算属性的出现。
 
   ```javascript
-    conputed:{
+    computed:{
       fullName () {
         return this.firstName+this.lastName
       }
@@ -159,7 +159,7 @@
   + 在某些情况下，你也可以提供一个setter方法（不常用）。
 
   ```javascript
-    conputed:{
+    computed:{
       fullName:{
         get(){
           console.log('调用了fullName')
@@ -265,7 +265,7 @@
     v-if当条件为false时，压根不会有对应的元素在DOM中。
     v-show当条件为false时，仅仅是将元素的display属性设置为none而已。
   开发中如何选择呢？
-    当需要在显示与隐藏之间切片很频繁时，使用v-show
+    当需要在显示与隐藏之间切换很频繁时，使用v-show
     当只有一次切换时，通过使用v-if
   */
   ```
@@ -390,7 +390,7 @@
     })
     //2.注册组件
     Vue.component('cpn',cpn)
-    //3.使用组建
+    //3.使用组件
   const app=new Vue({
     el:'#app',
     data: {
@@ -425,7 +425,7 @@
     data: {
 
     },
-    conponents:{
+    components:{
       //第一个是标签名 第二个是组件名字
       cpn:cpn
     }
@@ -526,8 +526,7 @@
   + 比如在一个页面中，我们从服务器请求到了很多的数据
   + 其中一部分数据，并非是我们整个页面的大组件来展示的，而是需要下面的子组件进行展示
   + 这个时候，并不会让子组件再次发送一个网络请求，而是直接让大组件(父组件)将数据传递给小组件(子组件)
-+ 如何进行父子组件间的通信呢？Vue官方提到
-  + 如何进行父子组件间的通信呢？Vue官方提到
++ 如何进行父子组件间的通信呢？
   + 通过事件向父组件发送消息
 
 ### 父级向子级传递
@@ -722,7 +721,7 @@ export class Person{
   + 这个时候就可以使用export default
 
 ```javascript
-expor default function  (){
+export default function  (){
 console.log(111)
 }
 //在别的地方导入我门就可以自定义名字了
@@ -833,7 +832,7 @@ module.exports={
   + 在webpack.config.js中的modules关键字下进行配置
 
 ```JavaScript
-modul:{
+modules:{
   rules:[
     {
       test:/\.css$/,
@@ -1053,7 +1052,7 @@ vue init webpack my-project
 ```javascript
 new Vue({
 el:'#app',
-conponents:{app},
+components:{app},
 template:'<app/>'
 })
 // tempalte-->ast-->render-->vdom-->UI
@@ -1098,7 +1097,7 @@ render:(createElement)=>{
 ### Vue CLI3
 
 + vue-cli 3 与 2 版本有很大区别
-  + vue-cli 3 是基于 webpack 4 打造，vue-cli 2 还是 webapck 3
+  + vue-cli 3 是基于 webpack 4 打造，vue-cli 2 还是 webpack 3
   + vue-cli 3 的设计原则是“0配置”，移除的配置文件根目录下的，build和config等目录
   + vue-cli 3 提供了 vue ui 命令，提供了可视化配置，更加人性化
   + 移除了static文件夹，新增了public文件夹，并且index.html移动到public中
@@ -1106,7 +1105,7 @@ render:(createElement)=>{
 #### vue cli3配置文件的查看和修改
 
 1. 启动配置服务器vue ui
-2. node_modules-->@vue-->cli-service-->webpack.cpnfig.js-->lib-->service
+2. node_modules-->@vue-->cli-service-->webpack.config.js-->lib-->service
 3. 创建vue.config.js
 
 ```javascript
@@ -1268,7 +1267,7 @@ const router=new VueRouter({
 
 })
 
-//4.到出router实例
+//4.导出router实例
 export default router
 
 //5.挂在到Vue实例中
@@ -1307,8 +1306,8 @@ const routes=[
 + 在路由切换时, 切换的是<router-view>挂载的组件, 其他内容不会发生改变
 
 ```javascript
-<router-link>首页</ruoter-link>
-<router-link>关于</ruoter-link>
+<router-link>首页</router-link>
+<router-link>关于</router-link>
 <router-view></router-view>
 ```
 
@@ -1322,13 +1321,13 @@ const routes=[
 + 配置解析
   + 我们在routes中又配置了一个映射
   + path配置的是根路径: /
-  + redirct是重定向, 也就是我们将根路径重定向到/home的路径下, 这样就可以得到我们想要的结果了
+  + redirect是重定向, 也就是我们将根路径重定向到/home的路径下, 这样就可以得到我们想要的结果了
   
 ```javascript
 const routes=[
     {
       path:'/',
-      redirct:'/home'
+      redirect:'/home'
     }
 ]
 ```
@@ -1459,7 +1458,7 @@ const routes=[
             component:News
           },
           {
-            ppath:'',
+            path:'',
             component:Message
           }
       ]
@@ -1591,7 +1590,6 @@ router.afterEach((to,from)=>{
   + include - 字符串或正则表达，只有匹配的组件会被缓存
   + exclude - 字符串或正则表达式，任何匹配的组件都不会被缓存
   
-+ router-view 也是一个组件，如果直接被包在 keep-alive 里面，所有路径匹配到的视图组件都会被缓存
 + router-view 也是一个组件，如果直接被包在 keep-alive 里面，所有路径匹配到的视图组件都会被缓存
 
 ```javascript
